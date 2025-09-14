@@ -36,9 +36,9 @@ const Header = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-6">
-            <a href="#" className="text-sm font-medium hover:text-primary transition-finance">Articles</a>
+            <a href="/articles" className="text-sm font-medium hover:text-primary transition-finance">Articles</a>
             <a href="#" className="text-sm font-medium hover:text-primary transition-finance">Terms</a>
-            <a href="#" className="text-sm font-medium hover:text-primary transition-finance">Calculators</a>
+            <a href="/tools" className="text-sm font-medium hover:text-primary transition-finance">Calculators</a>
             <a href="#" className="text-sm font-medium hover:text-primary transition-finance">Guides</a>
           </nav>
 
@@ -94,9 +94,9 @@ const Header = () => {
               
               {/* Mobile Navigation */}
               <nav className="flex flex-col space-y-2">
-                <a href="#" className="px-3 py-2 text-sm font-medium hover:bg-muted rounded-lg transition-finance">Articles</a>
+                <a href="/articles" className="px-3 py-2 text-sm font-medium hover:bg-muted rounded-lg transition-finance">Articles</a>
                 <a href="#" className="px-3 py-2 text-sm font-medium hover:bg-muted rounded-lg transition-finance">Terms</a>
-                <a href="#" className="px-3 py-2 text-sm font-medium hover:bg-muted rounded-lg transition-finance">Calculators</a>
+                <a href="/tools" className="px-3 py-2 text-sm font-medium hover:bg-muted rounded-lg transition-finance">Calculators</a>
                 <a href="#" className="px-3 py-2 text-sm font-medium hover:bg-muted rounded-lg transition-finance">Guides</a>
               </nav>
             </div>
