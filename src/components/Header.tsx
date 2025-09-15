@@ -39,6 +39,7 @@ const Header = () => {
             <a href="/articles" className="text-sm font-medium hover:text-primary transition-finance">Articles</a>
             <a href="#" className="text-sm font-medium hover:text-primary transition-finance">Terms</a>
             <a href="/tools" className="text-sm font-medium hover:text-primary transition-finance">Calculators</a>
+            <a href="/hidden-tools" className="text-sm font-medium hover:text-primary transition-finance">Advanced Tools</a>
             <a href="#" className="text-sm font-medium hover:text-primary transition-finance">Guides</a>
           </nav>
 
@@ -97,6 +98,7 @@ const Header = () => {
                 <a href="/articles" className="px-3 py-2 text-sm font-medium hover:bg-muted rounded-lg transition-finance">Articles</a>
                 <a href="#" className="px-3 py-2 text-sm font-medium hover:bg-muted rounded-lg transition-finance">Terms</a>
                 <a href="/tools" className="px-3 py-2 text-sm font-medium hover:bg-muted rounded-lg transition-finance">Calculators</a>
+                <a href="/hidden-tools" className="px-3 py-2 text-sm font-medium hover:bg-muted rounded-lg transition-finance">Advanced Tools</a>
                 <a href="#" className="px-3 py-2 text-sm font-medium hover:bg-muted rounded-lg transition-finance">Guides</a>
               </nav>
             </div>

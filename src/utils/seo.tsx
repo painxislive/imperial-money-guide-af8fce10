@@ -160,3 +160,15 @@ export const generateBreadcrumbSchema = (breadcrumbs: Array<{ name: string; url:
     "item": crumb.url
   }))
 });
+
+export const generateSEO = ({ title, description, keywords, path }: {
+  title: string;
+  description: string;
+  keywords?: string;
+  path: string;
+}) => ({
+  title,
+  description,
+  keywords: keywords || "finance, investing, personal finance, calculators",
+  canonical: `https://imperialpedia.com${path}`
+});
