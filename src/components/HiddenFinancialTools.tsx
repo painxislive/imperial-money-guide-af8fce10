@@ -1,9 +1,16 @@
 import React, { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { setAPIKeys } from "@/services/marketData";
+import RepoCalculator from "@/components/calculators/RepoCalculator";
+import LeverageSimulator from "@/components/calculators/LeverageSimulator";
+import OptionPayoffCalculator from "@/components/calculators/OptionPayoffCalculator";
+import CDOTrancheSimulator from "@/components/calculators/CDOTrancheSimulator";
+import SwapTimelineCalculator from "@/components/calculators/SwapTimelineCalculator";
+import FXSwapCalculator from "@/components/calculators/FXSwapCalculator";
 
 type Tool = {
   id: string;
@@ -15,6 +22,9 @@ type Tool = {
 const TOOLS: Tool[] = [
   { id: "repo", title: "Repurchase agreements (Repos / Reverse repos)", desc: "Short-term collateralized loans used by institutions to fund positions or park cash.", hasCalc: true },
   { id: "otc", title: "Over-the-counter (OTC) derivatives", desc: "Bespoke contracts (swaps, CDS, options) traded bilaterally.", hasCalc: true },
+  { id: "cdo", title: "CDO Tranche Simulator", desc: "Model how losses flow through structured product tranches.", hasCalc: true },
+  { id: "swap", title: "Interest Rate Swap Timeline", desc: "Calculate swap cashflows and P&L over time.", hasCalc: true },
+  { id: "fxswap", title: "FX Swap Calculator", desc: "Calculate FX swap cashflows and implied interest differentials.", hasCalc: true },
   { id: "dark", title: "Dark pools / alternative trading venues", desc: "Private venues that hide large institutional orders.", hasCalc: false },
   { id: "shadow", title: "Shadow-banking vehicles", desc: "Nonbank lenders, SIVs and large money-market operations off regulated balance sheets.", hasCalc: false },
   { id: "cbtools", title: "Central-bank unconventional tools", desc: "QE, yield-curve control, standing repos and other balance-sheet operations.", hasCalc: false },
@@ -29,12 +39,28 @@ const TOOLS: Tool[] = [
 
 export default function HiddenFinancialTools() {
   const [activeCalc, setActiveCalc] = useState<string | null>(null);
+  const [showAPIConfig, setShowAPIConfig] = useState(false);
+
+  const handleAPIConfig = (alphaKey: string, fredKey: string) => {
+    setAPIKeys(alphaKey, fredKey);
+    setShowAPIConfig(false);
+  };
 
   return (
     <div className="container mx-auto p-6">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-foreground mb-2">Hidden Financial Tools</h1>
         <p className="text-muted-foreground">Educational demos of institutional financial instruments and calculators</p>
+        
+        <div className="mt-4 flex gap-2">
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => setShowAPIConfig(true)}
+          >
+            Configure API Keys
+          </Button>
+        </div>
       </div>
 
       <div className="grid gap-4">
@@ -62,10 +88,41 @@ export default function HiddenFinancialTools() {
       </div>
 
       <Dialog open={!!activeCalc} onOpenChange={() => setActiveCalc(null)}>
-        <DialogContent className="max-w-2xl">
-          {activeCalc === "repo" && <RepoCalculator />}
-          {activeCalc === "otc" && <OptionPayoffCalculator />}
-          {activeCalc === "rehyp" && <LeverageSimulator />}
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <Tabs defaultValue="calculator" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="calculator">Calculator</TabsTrigger>
+              <TabsTrigger value="info">Info & Theory</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="calculator" className="mt-4">
+              {activeCalc === "repo" && <RepoCalculator />}
+              {activeCalc === "otc" && <OptionPayoffCalculator />}
+              {activeCalc === "rehyp" && <LeverageSimulator />}
+              {activeCalc === "cdo" && <CDOTrancheSimulator />}
+              {activeCalc === "swap" && <SwapTimelineCalculator />}
+              {activeCalc === "fxswap" && <FXSwapCalculator />}
+            </TabsContent>
+            
+            <TabsContent value="info" className="mt-4">
+              <div className="p-4 bg-muted rounded-lg">
+                <h3 className="font-semibold mb-2">About This Instrument</h3>
+                <p className="text-sm text-muted-foreground">
+                  {TOOLS.find(t => t.id === activeCalc)?.desc}
+                </p>
+                <div className="mt-4 text-xs text-muted-foreground">
+                  <strong>Risk Warning:</strong> These instruments are complex and carry significant risks. 
+                  This is for educational purposes only.
+                </div>
+              </div>
+            </TabsContent>
+          </Tabs>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showAPIConfig} onOpenChange={setShowAPIConfig}>
+        <DialogContent className="max-w-md">
+          <APIConfigForm onSave={handleAPIConfig} onCancel={() => setShowAPIConfig(false)} />
         </DialogContent>
       </Dialog>
 
@@ -74,253 +131,51 @@ export default function HiddenFinancialTools() {
           <strong>Disclaimer:</strong> Educational purposes only. These instruments can be complex and risky. 
           Please consult with financial professionals and include appropriate legal & risk disclosures in production.
         </p>
+        <div className="mt-2 text-xs text-muted-foreground">
+          <strong>Market Data:</strong> Live data requires API keys from Alpha Vantage (FX) and FRED (rates). 
+          Demo data is used when keys are not configured.
+        </div>
       </div>
     </div>
   );
 }
 
-function RepoCalculator() {
-  const [cash, setCash] = useState<number>(1_000_000);
-  const [haircut, setHaircut] = useState<number>(0.02);
-  const [repoRate, setRepoRate] = useState<number>(0.05);
-  const [days, setDays] = useState<number>(7);
-
-  const collateral = cash / (1 - haircut);
-  const interest = cash * repoRate * (days / 360);
-  const netCash = cash - interest;
+function APIConfigForm({ onSave, onCancel }: { onSave: (alpha: string, fred: string) => void; onCancel: () => void }) {
+  const [alphaKey, setAlphaKey] = useState("");
+  const [fredKey, setFredKey] = useState("");
 
   return (
-    <>
-      <DialogHeader>
-        <DialogTitle>Repo Calculator</DialogTitle>
-        <p className="text-muted-foreground">Estimate collateral and interest for a simple repo</p>
-      </DialogHeader>
-      
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+    <div>
+      <h3 className="text-lg font-semibold mb-4">Configure API Keys</h3>
+      <div className="space-y-4">
         <div>
-          <label className="text-sm font-medium">Cash lent/borrowed</label>
-          <Input 
-            type="number" 
-            value={cash} 
-            onChange={(e) => setCash(Number(e.target.value))}
-            className="mt-1"
+          <label className="text-sm font-medium">Alpha Vantage API Key</label>
+          <input 
+            type="text"
+            value={alphaKey}
+            onChange={(e) => setAlphaKey(e.target.value)}
+            placeholder="Get free key from alphavantage.co"
+            className="mt-1 w-full p-2 border rounded"
           />
         </div>
         <div>
-          <label className="text-sm font-medium">Haircut (fraction)</label>
-          <Input 
-            type="number" 
-            step="0.001"
-            value={haircut} 
-            onChange={(e) => setHaircut(Number(e.target.value))}
-            className="mt-1"
+          <label className="text-sm font-medium">FRED API Key</label>
+          <input 
+            type="text"
+            value={fredKey}
+            onChange={(e) => setFredKey(e.target.value)}
+            placeholder="Get free key from fred.stlouisfed.org"
+            className="mt-1 w-full p-2 border rounded"
           />
         </div>
-        <div>
-          <label className="text-sm font-medium">Repo rate (annual)</label>
-          <Input 
-            type="number" 
-            step="0.001"
-            value={repoRate} 
-            onChange={(e) => setRepoRate(Number(e.target.value))}
-            className="mt-1"
-          />
+        <div className="flex gap-2 pt-4">
+          <Button onClick={() => onSave(alphaKey, fredKey)}>Save Keys</Button>
+          <Button variant="outline" onClick={onCancel}>Cancel</Button>
         </div>
-        <div>
-          <label className="text-sm font-medium">Term (days)</label>
-          <Input 
-            type="number" 
-            value={days} 
-            onChange={(e) => setDays(Number(e.target.value))}
-            className="mt-1"
-          />
+        <div className="text-xs text-muted-foreground">
+          Keys are stored locally in your browser. Demo data is used when keys are not provided.
         </div>
       </div>
-
-      <div className="mt-6 space-y-4 border-t pt-4">
-        <div>
-          <div className="text-sm text-muted-foreground">Collateral required (market value)</div>
-          <div className="text-2xl font-semibold">₹ {collateral.toLocaleString(undefined, { maximumFractionDigits: 2 })}</div>
-        </div>
-        <div>
-          <div className="text-sm text-muted-foreground">Interest due (approx)</div>
-          <div className="text-lg font-medium">₹ {interest.toLocaleString(undefined, { maximumFractionDigits: 2 })}</div>
-        </div>
-        <div>
-          <div className="text-sm text-muted-foreground">Net cash to borrower</div>
-          <div className="text-lg font-medium">₹ {netCash.toLocaleString(undefined, { maximumFractionDigits: 2 })}</div>
-        </div>
-      </div>
-    </>
-  );
-}
-
-function LeverageSimulator() {
-  const [initialCollateral, setInitialCollateral] = useState<number>(1_000_000);
-  const [rehypRounds, setRehypRounds] = useState<number>(3);
-  const [haircut, setHaircut] = useState<number>(0.02);
-
-  const rounds: { round: number; collateral: number; borrowed: number }[] = [];
-  let currentCollateral = initialCollateral;
-  let totalBorrowed = 0;
-  
-  for (let i = 0; i < rehypRounds; i++) {
-    const borrowed = currentCollateral * (1 - haircut);
-    rounds.push({ round: i + 1, collateral: currentCollateral, borrowed });
-    totalBorrowed += borrowed;
-    currentCollateral = borrowed;
-  }
-  
-  const effectiveLeverage = totalBorrowed / initialCollateral;
-
-  return (
-    <>
-      <DialogHeader>
-        <DialogTitle>Rehypothecation & Leverage Simulator</DialogTitle>
-        <p className="text-muted-foreground">See how collateral rehypothecation can amplify lending</p>
-      </DialogHeader>
-
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
-        <div>
-          <label className="text-sm font-medium">Initial collateral</label>
-          <Input 
-            type="number" 
-            value={initialCollateral} 
-            onChange={(e) => setInitialCollateral(Number(e.target.value))}
-            className="mt-1"
-          />
-        </div>
-        <div>
-          <label className="text-sm font-medium">Rehypothecation rounds</label>
-          <Input 
-            type="number" 
-            value={rehypRounds} 
-            onChange={(e) => setRehypRounds(Number(e.target.value))}
-            className="mt-1"
-          />
-        </div>
-        <div>
-          <label className="text-sm font-medium">Haircut (fraction)</label>
-          <Input 
-            type="number" 
-            step="0.001"
-            value={haircut} 
-            onChange={(e) => setHaircut(Number(e.target.value))}
-            className="mt-1"
-          />
-        </div>
-      </div>
-
-      <div className="mt-6">
-        <h3 className="font-medium mb-3">Round-by-round breakdown</h3>
-        <div className="space-y-2 max-h-60 overflow-y-auto">
-          {rounds.map((r) => (
-            <Card key={r.round} className="p-3">
-              <div className="flex justify-between">
-                <div>
-                  <div className="text-sm font-medium">Round {r.round}</div>
-                  <div className="text-xs text-muted-foreground">
-                    Collateral: ₹ {r.collateral.toLocaleString()}
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    Borrowed: ₹ {r.borrowed.toLocaleString(undefined, { maximumFractionDigits: 2 })}
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="text-xs text-muted-foreground">Cumulative borrowed</div>
-                  <div className="text-sm font-medium">
-                    ₹ {rounds.slice(0, r.round).reduce((s, x) => s + x.borrowed, 0).toLocaleString(undefined, { maximumFractionDigits: 2 })}
-                  </div>
-                </div>
-              </div>
-            </Card>
-          ))}
-        </div>
-
-        <div className="mt-6 space-y-3 border-t pt-4">
-          <div>
-            <div className="text-sm text-muted-foreground">Total borrowed across rounds</div>
-            <div className="text-2xl font-semibold">₹ {totalBorrowed.toLocaleString(undefined, { maximumFractionDigits: 2 })}</div>
-          </div>
-          <div>
-            <div className="text-sm text-muted-foreground">Effective leverage (total borrowed / initial collateral)</div>
-            <div className="text-xl font-semibold text-primary">{effectiveLeverage.toFixed(3)}x</div>
-          </div>
-        </div>
-      </div>
-    </>
-  );
-}
-
-function OptionPayoffCalculator() {
-  const [spot, setSpot] = useState<number>(100);
-  const [strike, setStrike] = useState<number>(105);
-  const [premium, setPremium] = useState<number>(2.5);
-  const [isCall, setIsCall] = useState<boolean>(true);
-
-  const intrinsic = isCall ? Math.max(0, spot - strike) : Math.max(0, strike - spot);
-  const payoff = intrinsic - premium;
-
-  return (
-    <>
-      <DialogHeader>
-        <DialogTitle>Option Payoff Calculator</DialogTitle>
-        <p className="text-muted-foreground">Calculate call/put option payoffs at maturity</p>
-      </DialogHeader>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
-        <div>
-          <label className="text-sm font-medium">Spot price at maturity</label>
-          <Input 
-            type="number" 
-            value={spot} 
-            onChange={(e) => setSpot(Number(e.target.value))}
-            className="mt-1"
-          />
-        </div>
-        <div>
-          <label className="text-sm font-medium">Strike price</label>
-          <Input 
-            type="number" 
-            value={strike} 
-            onChange={(e) => setStrike(Number(e.target.value))}
-            className="mt-1"
-          />
-        </div>
-        <div>
-          <label className="text-sm font-medium">Premium paid</label>
-          <Input 
-            type="number" 
-            value={premium} 
-            onChange={(e) => setPremium(Number(e.target.value))}
-            className="mt-1"
-          />
-        </div>
-        <div>
-          <label className="text-sm font-medium">Option type</label>
-          <select 
-            value={isCall ? "call" : "put"} 
-            onChange={(e) => setIsCall(e.target.value === "call")}
-            className="mt-1 w-full h-10 px-3 py-2 rounded-md border border-input bg-background text-sm"
-          >
-            <option value="call">Call Option</option>
-            <option value="put">Put Option</option>
-          </select>
-        </div>
-      </div>
-
-      <div className="mt-6 space-y-4 border-t pt-4">
-        <div>
-          <div className="text-sm text-muted-foreground">Intrinsic value</div>
-          <div className="text-2xl font-semibold">{intrinsic.toFixed(2)}</div>
-        </div>
-        <div>
-          <div className="text-sm text-muted-foreground">Net payoff (intrinsic - premium)</div>
-          <div className={`text-xl font-semibold ${payoff >= 0 ? "text-success" : "text-destructive"}`}>
-            {payoff.toFixed(2)}
-          </div>
-        </div>
-      </div>
-    </>
+    </div>
   );
 }
