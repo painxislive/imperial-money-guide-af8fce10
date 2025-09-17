@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { marketData } from "@/services/marketData";
+import { SaveScenarioDialog } from "@/components/SaveScenarioDialog";
 
 export default function RepoCalculator() {
   const [cash, setCash] = useState<number>(1_000_000);
@@ -93,6 +94,16 @@ export default function RepoCalculator() {
           <div className="text-sm text-muted-foreground">Net cash to borrower</div>
           <div className="text-lg font-medium">₹ {netCash.toLocaleString(undefined, { maximumFractionDigits: 2 })}</div>
         </div>
+      </div>
+
+      {/* Save Scenario Section */}
+      <div className="mt-6 pt-4 border-t flex justify-center">
+        <SaveScenarioDialog
+          toolType="RepoCalculator"
+          inputData={{ cash, haircut, repoRate, days }}
+          outputData={{ collateral, interest, netCash }}
+          disabled={!cash || !haircut || !repoRate || !days}
+        />
       </div>
     </>
   );
