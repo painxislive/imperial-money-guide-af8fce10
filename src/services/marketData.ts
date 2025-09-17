@@ -20,9 +20,15 @@ class MarketDataService {
   private fredKey: string;
 
   constructor() {
-    // In production, these would come from Supabase secrets or user input
-    this.alphaVantageKey = localStorage.getItem('ALPHA_VANTAGE_KEY') || 'demo';
-    this.fredKey = localStorage.getItem('FRED_KEY') || 'demo';
+    // Try environment variables first, then localStorage, then demo
+    this.alphaVantageKey = 
+      import.meta.env.VITE_ALPHA_VANTAGE_KEY || 
+      localStorage.getItem('ALPHA_VANTAGE_KEY') || 
+      'demo';
+    this.fredKey = 
+      import.meta.env.VITE_FRED_KEY || 
+      localStorage.getItem('FRED_KEY') || 
+      'demo';
   }
 
   async getFXRate(from: string, to: string): Promise<FXRate | null> {
