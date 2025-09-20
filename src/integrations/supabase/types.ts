@@ -14,6 +14,72 @@ export type Database = {
   }
   public: {
     Tables: {
+      articles: {
+        Row: {
+          author: string | null
+          category: string
+          content: string
+          created_at: string
+          excerpt: string | null
+          featured_image: string | null
+          id: string
+          is_featured: boolean
+          is_published: boolean
+          published_at: string
+          seo_description: string | null
+          seo_title: string | null
+          slug: string
+          source_name: string | null
+          source_url: string | null
+          tags: string[] | null
+          title: string
+          updated_at: string
+          view_count: number
+        }
+        Insert: {
+          author?: string | null
+          category?: string
+          content: string
+          created_at?: string
+          excerpt?: string | null
+          featured_image?: string | null
+          id?: string
+          is_featured?: boolean
+          is_published?: boolean
+          published_at?: string
+          seo_description?: string | null
+          seo_title?: string | null
+          slug: string
+          source_name?: string | null
+          source_url?: string | null
+          tags?: string[] | null
+          title: string
+          updated_at?: string
+          view_count?: number
+        }
+        Update: {
+          author?: string | null
+          category?: string
+          content?: string
+          created_at?: string
+          excerpt?: string | null
+          featured_image?: string | null
+          id?: string
+          is_featured?: boolean
+          is_published?: boolean
+          published_at?: string
+          seo_description?: string | null
+          seo_title?: string | null
+          slug?: string
+          source_name?: string | null
+          source_url?: string | null
+          tags?: string[] | null
+          title?: string
+          updated_at?: string
+          view_count?: number
+        }
+        Relationships: []
+      }
       bookmarks: {
         Row: {
           content_id: string
@@ -32,6 +98,54 @@ export type Database = {
           created_at?: string
           id?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      glossary_terms: {
+        Row: {
+          category: string | null
+          created_at: string
+          definition: string
+          id: string
+          is_published: boolean
+          letter: string
+          related_articles: string[] | null
+          seo_description: string | null
+          seo_title: string | null
+          slug: string
+          term: string
+          updated_at: string
+          view_count: number
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          definition: string
+          id?: string
+          is_published?: boolean
+          letter: string
+          related_articles?: string[] | null
+          seo_description?: string | null
+          seo_title?: string | null
+          slug: string
+          term: string
+          updated_at?: string
+          view_count?: number
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          definition?: string
+          id?: string
+          is_published?: boolean
+          letter?: string
+          related_articles?: string[] | null
+          seo_description?: string | null
+          seo_title?: string | null
+          slug?: string
+          term?: string
+          updated_at?: string
+          view_count?: number
         }
         Relationships: []
       }
@@ -59,6 +173,39 @@ export type Database = {
           role?: string | null
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      rss_sources: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          is_active: boolean
+          last_fetched_at: string | null
+          name: string
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          last_fetched_at?: string | null
+          name: string
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          last_fetched_at?: string | null
+          name?: string
+          updated_at?: string
+          url?: string
         }
         Relationships: []
       }

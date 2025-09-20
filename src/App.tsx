@@ -7,6 +7,10 @@ import { HelmetProvider } from "react-helmet-async";
 import { AuthProvider } from "@/hooks/useAuth";
 import Index from "./pages/Index";
 import Articles from "./pages/Articles";
+import News from "./pages/News";
+import NewsArticle from "./pages/NewsArticle";
+import TopicsLetter from "./pages/TopicsLetter";
+import AdminDashboard from "./pages/AdminDashboard";
 import Tools from "./pages/Tools";
 import HiddenTools from "./pages/HiddenTools";
 import Login from "./pages/Login";
@@ -27,6 +31,10 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/articles" element={<Articles />} />
+              <Route path="/news" element={<News />} />
+              <Route path="/news/:slug" element={<NewsArticle />} />
+              <Route path="/topics/:letter" element={<TopicsLetter />} />
+              <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/tools" element={<Tools />} />
               <Route path="/hidden-tools" element={<HiddenTools />} />
               <Route path="/login" element={<Login />} />
