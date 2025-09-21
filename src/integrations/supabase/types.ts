@@ -17,6 +17,7 @@ export type Database = {
       articles: {
         Row: {
           author: string | null
+          author_id: string | null
           category: string
           content: string
           created_at: string
@@ -24,6 +25,7 @@ export type Database = {
           featured_image: string | null
           id: string
           is_featured: boolean
+          is_premium: boolean
           is_published: boolean
           published_at: string
           seo_description: string | null
@@ -38,6 +40,7 @@ export type Database = {
         }
         Insert: {
           author?: string | null
+          author_id?: string | null
           category?: string
           content: string
           created_at?: string
@@ -45,6 +48,7 @@ export type Database = {
           featured_image?: string | null
           id?: string
           is_featured?: boolean
+          is_premium?: boolean
           is_published?: boolean
           published_at?: string
           seo_description?: string | null
@@ -59,6 +63,7 @@ export type Database = {
         }
         Update: {
           author?: string | null
+          author_id?: string | null
           category?: string
           content?: string
           created_at?: string
@@ -66,6 +71,7 @@ export type Database = {
           featured_image?: string | null
           id?: string
           is_featured?: boolean
+          is_premium?: boolean
           is_published?: boolean
           published_at?: string
           seo_description?: string | null
@@ -77,6 +83,53 @@ export type Database = {
           title?: string
           updated_at?: string
           view_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "articles_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "authors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      authors: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          social_linkedin: string | null
+          social_twitter: string | null
+          social_website: string | null
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          social_linkedin?: string | null
+          social_twitter?: string | null
+          social_website?: string | null
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          social_linkedin?: string | null
+          social_twitter?: string | null
+          social_website?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
@@ -100,6 +153,57 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      comments: {
+        Row: {
+          article_id: string
+          content: string
+          created_at: string
+          id: string
+          is_approved: boolean
+          is_deleted: boolean
+          parent_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          article_id: string
+          content: string
+          created_at?: string
+          id?: string
+          is_approved?: boolean
+          is_deleted?: boolean
+          parent_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          article_id?: string
+          content?: string
+          created_at?: string
+          id?: string
+          is_approved?: boolean
+          is_deleted?: boolean
+          parent_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comments_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "comments"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       glossary_terms: {
         Row: {
@@ -154,7 +258,9 @@ export type Database = {
           created_at: string
           full_name: string | null
           id: string
+          is_subscribed: boolean
           role: string | null
+          subscription_expires_at: string | null
           updated_at: string
           user_id: string
         }
@@ -162,7 +268,9 @@ export type Database = {
           created_at?: string
           full_name?: string | null
           id?: string
+          is_subscribed?: boolean
           role?: string | null
+          subscription_expires_at?: string | null
           updated_at?: string
           user_id: string
         }
@@ -170,7 +278,9 @@ export type Database = {
           created_at?: string
           full_name?: string | null
           id?: string
+          is_subscribed?: boolean
           role?: string | null
+          subscription_expires_at?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -242,6 +352,30 @@ export type Database = {
           tool_type?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      subscribers: {
+        Row: {
+          email: string
+          id: string
+          is_active: boolean
+          subscribed_at: string
+          unsubscribed_at: string | null
+        }
+        Insert: {
+          email: string
+          id?: string
+          is_active?: boolean
+          subscribed_at?: string
+          unsubscribed_at?: string | null
+        }
+        Update: {
+          email?: string
+          id?: string
+          is_active?: boolean
+          subscribed_at?: string
+          unsubscribed_at?: string | null
         }
         Relationships: []
       }
