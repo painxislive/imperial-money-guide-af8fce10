@@ -9,6 +9,8 @@ import Index from "./pages/Index";
 import Articles from "./pages/Articles";
 import News from "./pages/News";
 import NewsArticle from "./pages/NewsArticle";
+import CategoryPage from "./pages/CategoryPage";
+import AuthorProfile from "./pages/AuthorProfile";
 import TopicsLetter from "./pages/TopicsLetter";
 import AdminDashboard from "./pages/AdminDashboard";
 import Tools from "./pages/Tools";
@@ -19,6 +21,8 @@ import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 import { Premium } from "./pages/Premium";
 import { About } from "./pages/About";
+import Editorial from "./pages/Editorial";
+import Disclaimer from "./pages/Disclaimer";
 import { Privacy } from "./pages/Privacy";
 import { Terms } from "./pages/Terms";
 
@@ -37,6 +41,8 @@ const App = () => (
               <Route path="/articles" element={<Articles />} />
               <Route path="/news" element={<News />} />
               <Route path="/news/:slug" element={<NewsArticle />} />
+              <Route path="/category/:category" element={<CategoryPage />} />
+              <Route path="/author/:authorId" element={<AuthorProfile />} />
               <Route path="/topics/:letter" element={<TopicsLetter />} />
               <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/tools" element={<Tools />} />
@@ -46,6 +52,8 @@ const App = () => (
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/premium" element={<Premium />} />
               <Route path="/about" element={<About />} />
+              <Route path="/editorial" element={<Editorial />} />
+              <Route path="/disclaimer" element={<Disclaimer />} />
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/terms" element={<Terms />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

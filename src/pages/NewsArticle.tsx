@@ -4,14 +4,19 @@ import { Helmet } from 'react-helmet-async';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { contentService, Article } from '@/lib/content';
+import { contentService, Article, GlossaryTerm } from '@/lib/content';
 import { ArrowLeft, Calendar, Eye, ExternalLink, Share2, Bookmark } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { AdSenseSlot, AffiliateSlot } from '@/components/AdSenseSlots';
+import { Comments } from '@/components/Comments';
+import { NewsletterSignup } from '@/components/NewsletterSignup';
+import { useGlossaryLinker } from '@/utils/glossaryLinker';
 
 const NewsArticle = () => {
   const { slug } = useParams<{ slug: string }>();
   const [article, setArticle] = useState<Article | null>(null);
   const [relatedArticles, setRelatedArticles] = useState<Article[]>([]);
+  const [glossaryTerms, setGlossaryTerms] = useState<GlossaryTerm[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
@@ -25,14 +30,25 @@ const NewsArticle = () => {
       if (articleData) {
         setArticle(articleData);
         
-        // Load related articles from same category
-        const related = await contentService.getArticles({
-          category: articleData.category,
-          limit: 3
-        });
+        // Load related articles and glossary terms
+        const [related, allLetters] = await Promise.all([
+          contentService.getArticles({
+            category: articleData.category,
+            limit: 3
+          }),
+          contentService.getAllGlossaryLetters()
+        ]);
         
         // Filter out current article
         setRelatedArticles(related.filter(a => a.id !== articleData.id));
+        
+        // Load some glossary terms for auto-linking
+        if (allLetters.length > 0) {
+          const terms = await Promise.all(
+            allLetters.slice(0, 5).map(letter => contentService.getGlossaryTermsByLetter(letter))
+          );
+          setGlossaryTerms(terms.flat());
+        }
       }
       
       setLoading(false);
@@ -248,10 +264,21 @@ const NewsArticle = () => {
           )}
         </header>
 
+        {/* AdSense Article Top */}
+        <AdSenseSlot slot="article-top" className="mb-8" />
+
         {/* Article Content */}
-        <div className="prose prose-lg max-w-none mb-12">
-          <div dangerouslySetInnerHTML={{ __html: article.content }} />
-        </div>
+        <ArticleContent article={article} glossaryTerms={glossaryTerms} />
+
+        {/* AdSense Article Middle */}
+        <AdSenseSlot slot="article-middle" className="my-8" />
+
+        {/* Affiliate Content */}
+        <AffiliateSlot 
+          type={article.category === 'crypto' ? 'crypto-exchange' : 'broker'} 
+          position="inline" 
+          className="my-8" 
+        />
 
         {/* Tags */}
         {article.tags && article.tags.length > 0 && (
@@ -283,9 +310,18 @@ const NewsArticle = () => {
           </div>
         )}
 
+        {/* Newsletter Signup */}
+        <NewsletterSignup variant="inline" />
+
+        {/* AdSense Article Bottom */}
+        <AdSenseSlot slot="article-bottom" className="my-8" />
+
+        {/* Comments Section */}
+        <Comments articleId={article.id} />
+
         {/* Related Articles */}
         {relatedArticles.length > 0 && (
-          <section>
+          <section className="mt-12">
             <h3 className="text-2xl font-bold mb-6">Related Articles</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {relatedArticles.map((relatedArticle) => (
@@ -324,6 +360,25 @@ const NewsArticle = () => {
         )}
       </article>
     </>
+  );
+};
+
+// Component for article content with glossary linking
+const ArticleContent: React.FC<{ article: Article; glossaryTerms: GlossaryTerm[] }> = ({ 
+  article, 
+  glossaryTerms 
+}) => {
+  const { processContent } = useGlossaryLinker(glossaryTerms, {
+    maxLinksPerTerm: 2,
+    caseSensitive: false
+  });
+
+  const enhancedContent = processContent(article.content);
+
+  return (
+    <div className="prose prose-lg max-w-none mb-12">
+      <div dangerouslySetInnerHTML={{ __html: enhancedContent }} />
+    </div>
   );
 };
 

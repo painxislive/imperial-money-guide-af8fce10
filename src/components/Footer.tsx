@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Separator } from '@/components/ui/separator';
+import { NewsletterSignup } from '@/components/NewsletterSignup';
 
 const Footer = () => {
   // Generate A-Z alphabet links for glossary navigation
@@ -29,7 +30,7 @@ const Footer = () => {
 
         <Separator className="mb-8" />
         
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-6 gap-8">
           <div>
             <h3 className="font-semibold mb-4">ImperialPedia</h3>
             <p className="text-sm text-muted-foreground">
@@ -67,10 +68,16 @@ const Footer = () => {
           <div>
             <h4 className="font-medium mb-4">Company</h4>
             <ul className="space-y-2 text-sm">
+              <li><Link to="/about" className="text-muted-foreground hover:text-foreground">About Us</Link></li>
+              <li><Link to="/editorial" className="text-muted-foreground hover:text-foreground">Editorial Policy</Link></li>
               <li><Link to="/privacy" className="text-muted-foreground hover:text-foreground">Privacy Policy</Link></li>
               <li><Link to="/terms" className="text-muted-foreground hover:text-foreground">Terms of Service</Link></li>
-              <li><Link to="/support" className="text-muted-foreground hover:text-foreground">Support</Link></li>
+              <li><Link to="/disclaimer" className="text-muted-foreground hover:text-foreground">Disclaimer</Link></li>
             </ul>
+          </div>
+          
+          <div>
+            <NewsletterSignup variant="footer" />
           </div>
         </div>
         
