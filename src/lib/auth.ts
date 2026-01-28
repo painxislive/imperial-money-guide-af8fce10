@@ -1,5 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import { User, Session } from "@supabase/supabase-js";
+import { db } from "./supabase-helpers";
 
 export interface AuthUser {
   id: string;
@@ -82,8 +83,7 @@ export const authService = {
 
   // Profile methods
   async getUserProfile(userId: string): Promise<UserProfile | null> {
-    const { data, error } = await supabase
-      .from('profiles')
+    const { data, error } = await db('profiles')
       .select('*')
       .eq('user_id', userId)
       .single();
@@ -93,12 +93,11 @@ export const authService = {
       return null;
     }
     
-    return data;
+    return data as UserProfile;
   },
 
   async updateUserProfile(userId: string, updates: Partial<UserProfile>) {
-    const { data, error } = await supabase
-      .from('profiles')
+    const { data, error } = await db('profiles')
       .update(updates)
       .eq('user_id', userId);
     
@@ -116,8 +115,7 @@ export const authService = {
     const user = await this.getCurrentUser();
     if (!user) throw new Error('User not authenticated');
 
-    const { data, error } = await supabase
-      .from('saved_scenarios')
+    const { data, error } = await db('saved_scenarios')
       .insert({
         user_id: user.id,
         ...scenarioData,
@@ -133,8 +131,7 @@ export const authService = {
     const user = await this.getCurrentUser();
     if (!user) return [];
 
-    const { data, error } = await supabase
-      .from('saved_scenarios')
+    const { data, error } = await db('saved_scenarios')
       .select('*')
       .eq('user_id', user.id)
       .order('created_at', { ascending: false });
@@ -144,12 +141,11 @@ export const authService = {
       return [];
     }
 
-    return data || [];
+    return (data || []) as SavedScenario[];
   },
 
   async deleteScenario(scenarioId: string) {
-    const { error } = await supabase
-      .from('saved_scenarios')
+    const { error } = await db('saved_scenarios')
       .delete()
       .eq('id', scenarioId);
 
@@ -161,8 +157,7 @@ export const authService = {
     const user = await this.getCurrentUser();
     if (!user) throw new Error('User not authenticated');
 
-    const { data, error } = await supabase
-      .from('bookmarks')
+    const { data, error } = await db('bookmarks')
       .insert({
         user_id: user.id,
         content_id: contentId
@@ -175,8 +170,7 @@ export const authService = {
     const user = await this.getCurrentUser();
     if (!user) return [];
 
-    const { data, error } = await supabase
-      .from('bookmarks')
+    const { data, error } = await db('bookmarks')
       .select('*')
       .eq('user_id', user.id)
       .order('created_at', { ascending: false });
@@ -193,8 +187,7 @@ export const authService = {
     const user = await this.getCurrentUser();
     if (!user) throw new Error('User not authenticated');
 
-    const { error } = await supabase
-      .from('bookmarks')
+    const { error } = await db('bookmarks')
       .delete()
       .eq('user_id', user.id)
       .eq('content_id', contentId);

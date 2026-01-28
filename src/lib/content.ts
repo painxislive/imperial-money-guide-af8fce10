@@ -1,4 +1,4 @@
-import { supabase } from "@/integrations/supabase/client";
+import { db } from "./supabase-helpers";
 
 export interface Article {
   id: string;
@@ -57,8 +57,7 @@ export const contentService = {
     limit?: number;
     offset?: number;
   }) {
-    let query = supabase
-      .from('articles')
+    let query = db('articles')
       .select('*')
       .eq('is_published', true)
       .order('published_at', { ascending: false });
@@ -86,12 +85,11 @@ export const contentService = {
       return [];
     }
 
-    return data as Article[];
+    return (data || []) as Article[];
   },
 
   async getArticleBySlug(slug: string): Promise<Article | null> {
-    const { data, error } = await supabase
-      .from('articles')
+    const { data, error } = await db('articles')
       .select('*')
       .eq('slug', slug)
       .eq('is_published', true)
@@ -103,17 +101,18 @@ export const contentService = {
     }
 
     // Increment view count
-    await supabase
-      .from('articles')
-      .update({ view_count: data.view_count + 1 })
-      .eq('id', data.id);
+    if (data) {
+      const article = data as Article;
+      await db('articles')
+        .update({ view_count: article.view_count + 1 })
+        .eq('id', article.id);
+    }
 
     return data as Article;
   },
 
   async searchArticles(query: string, limit = 10) {
-    const { data, error } = await supabase
-      .from('articles')
+    const { data, error } = await db('articles')
       .select('*')
       .eq('is_published', true)
       .or(`title.ilike.%${query}%, content.ilike.%${query}%, tags.cs.{${query}}`)
@@ -125,12 +124,11 @@ export const contentService = {
       return [];
     }
 
-    return data as Article[];
+    return (data || []) as Article[];
   },
 
-  async getArticleCategories() {
-    const { data, error } = await supabase
-      .from('articles')
+  async getArticleCategories(): Promise<string[]> {
+    const { data, error } = await db('articles')
       .select('category')
       .eq('is_published', true);
 
@@ -139,13 +137,13 @@ export const contentService = {
       return [];
     }
 
-    return [...new Set(data.map(item => item.category))];
+    const categories = (data || []) as Array<{ category: string }>;
+    return [...new Set(categories.map(item => item.category))];
   },
 
   // RSS Source methods
   async getRSSSources() {
-    const { data, error } = await supabase
-      .from('rss_sources')
+    const { data, error } = await db('rss_sources')
       .select('*')
       .order('name');
 
@@ -154,12 +152,11 @@ export const contentService = {
       return [];
     }
 
-    return data as RSSSource[];
+    return (data || []) as RSSSource[];
   },
 
   async addRSSSource(source: Omit<RSSSource, 'id' | 'created_at' | 'updated_at'>) {
-    const { data, error } = await supabase
-      .from('rss_sources')
+    const { data, error } = await db('rss_sources')
       .insert(source)
       .select()
       .single();
@@ -168,8 +165,7 @@ export const contentService = {
   },
 
   async updateRSSSource(id: string, updates: Partial<RSSSource>) {
-    const { data, error } = await supabase
-      .from('rss_sources')
+    const { data, error } = await db('rss_sources')
       .update(updates)
       .eq('id', id)
       .select()
@@ -179,8 +175,7 @@ export const contentService = {
   },
 
   async deleteRSSSource(id: string) {
-    const { error } = await supabase
-      .from('rss_sources')
+    const { error } = await db('rss_sources')
       .delete()
       .eq('id', id);
 
@@ -189,8 +184,7 @@ export const contentService = {
 
   // Glossary methods
   async getGlossaryTermsByLetter(letter: string) {
-    const { data, error } = await supabase
-      .from('glossary_terms')
+    const { data, error } = await db('glossary_terms')
       .select('*')
       .eq('letter', letter.toUpperCase())
       .eq('is_published', true)
@@ -201,12 +195,11 @@ export const contentService = {
       return [];
     }
 
-    return data as GlossaryTerm[];
+    return (data || []) as GlossaryTerm[];
   },
 
   async getGlossaryTermBySlug(slug: string): Promise<GlossaryTerm | null> {
-    const { data, error } = await supabase
-      .from('glossary_terms')
+    const { data, error } = await db('glossary_terms')
       .select('*')
       .eq('slug', slug)
       .eq('is_published', true)
@@ -218,17 +211,18 @@ export const contentService = {
     }
 
     // Increment view count
-    await supabase
-      .from('glossary_terms')
-      .update({ view_count: data.view_count + 1 })
-      .eq('id', data.id);
+    if (data) {
+      const term = data as GlossaryTerm;
+      await db('glossary_terms')
+        .update({ view_count: term.view_count + 1 })
+        .eq('id', term.id);
+    }
 
     return data as GlossaryTerm;
   },
 
-  async getAllGlossaryLetters() {
-    const { data, error } = await supabase
-      .from('glossary_terms')
+  async getAllGlossaryLetters(): Promise<string[]> {
+    const { data, error } = await db('glossary_terms')
       .select('letter')
       .eq('is_published', true);
 
@@ -237,13 +231,13 @@ export const contentService = {
       return [];
     }
 
-    return [...new Set(data.map(item => item.letter))].sort();
+    const letters = (data || []) as Array<{ letter: string }>;
+    return [...new Set(letters.map(item => item.letter))].sort();
   },
 
   // Admin methods
   async createArticle(article: Omit<Article, 'id' | 'created_at' | 'updated_at' | 'view_count'>) {
-    const { data, error } = await supabase
-      .from('articles')
+    const { data, error } = await db('articles')
       .insert(article)
       .select()
       .single();
@@ -252,8 +246,7 @@ export const contentService = {
   },
 
   async updateArticle(id: string, updates: Partial<Article>) {
-    const { data, error } = await supabase
-      .from('articles')
+    const { data, error } = await db('articles')
       .update(updates)
       .eq('id', id)
       .select()
@@ -263,8 +256,7 @@ export const contentService = {
   },
 
   async deleteArticle(id: string) {
-    const { error } = await supabase
-      .from('articles')
+    const { error } = await db('articles')
       .delete()
       .eq('id', id);
 
@@ -272,25 +264,22 @@ export const contentService = {
   },
 
   async getAnalytics() {
-    const { data: articlesCount } = await supabase
-      .from('articles')
+    const { data: articlesCount } = await db('articles')
       .select('*', { count: 'exact', head: true });
 
-    const { data: todayArticles } = await supabase
-      .from('articles')
+    const { data: todayArticles } = await db('articles')
       .select('*', { count: 'exact', head: true })
       .gte('created_at', new Date().toISOString().split('T')[0]);
 
-    const { data: topArticles } = await supabase
-      .from('articles')
+    const { data: topArticles } = await db('articles')
       .select('title, view_count, slug')
       .eq('is_published', true)
       .order('view_count', { ascending: false })
       .limit(5);
 
     return {
-      totalArticles: articlesCount?.length || 0,
-      todayArticles: todayArticles?.length || 0,
+      totalArticles: (articlesCount as any[])?.length || 0,
+      todayArticles: (todayArticles as any[])?.length || 0,
       topArticles: topArticles || []
     };
   }
