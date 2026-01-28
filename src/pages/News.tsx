@@ -65,7 +65,7 @@ const News = () => {
       
       setArticles(articlesData);
       setFeaturedArticles(featuredData);
-      setCategories(categoriesData);
+      setCategories(categoriesData as string[]);
       setLoading(false);
     };
 

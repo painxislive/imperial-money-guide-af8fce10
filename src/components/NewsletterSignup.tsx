@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Mail, X } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { db } from '@/lib/supabase-helpers';
 import { toast } from '@/hooks/use-toast';
 
 interface NewsletterSignupProps {
@@ -21,8 +21,7 @@ export const NewsletterSignup: React.FC<NewsletterSignupProps> = ({ variant = 'i
 
     setLoading(true);
     try {
-      const { error } = await supabase
-        .from('subscribers')
+      const { error } = await db('subscribers')
         .insert({ email: email.trim() });
 
       if (error) {

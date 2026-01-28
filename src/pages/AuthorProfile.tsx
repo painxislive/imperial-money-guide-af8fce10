@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Calendar, Eye, ExternalLink, Twitter, Linkedin, Globe } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { db } from '@/lib/supabase-helpers';
 import { Article } from '@/lib/content';
 
 interface Author {
@@ -34,8 +34,7 @@ const AuthorProfile = () => {
       setLoading(true);
       
       // Load author details
-      const { data: authorData, error: authorError } = await supabase
-        .from('authors')
+      const { data: authorData, error: authorError } = await db('authors')
         .select('*')
         .eq('id', authorId)
         .eq('is_active', true)
@@ -46,18 +45,17 @@ const AuthorProfile = () => {
         return;
       }
 
-      setAuthor(authorData);
+      setAuthor(authorData as Author);
 
       // Load author's articles
-      const { data: articlesData, error: articlesError } = await supabase
-        .from('articles')
+      const { data: articlesData, error: articlesError } = await db('articles')
         .select('*')
         .eq('author_id', authorId)
         .eq('is_published', true)
         .order('published_at', { ascending: false });
 
       if (!articlesError && articlesData) {
-        setArticles(articlesData);
+        setArticles(articlesData as Article[]);
       }
 
       setLoading(false);

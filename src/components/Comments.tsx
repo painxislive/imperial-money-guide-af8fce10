@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import { supabase } from '@/integrations/supabase/client';
+import { db } from '@/lib/supabase-helpers';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { MessageCircle, Reply, Trash2 } from 'lucide-react';
+import { MessageCircle, Reply } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
 interface Comment {
@@ -37,8 +37,7 @@ export const Comments: React.FC<CommentsProps> = ({ articleId }) => {
 
   const fetchComments = async () => {
     try {
-      const { data, error } = await supabase
-        .from('comments')
+      const { data, error } = await db('comments')
         .select(`
           id,
           content,
@@ -53,9 +52,8 @@ export const Comments: React.FC<CommentsProps> = ({ articleId }) => {
       
       // Get profile data separately to avoid relation issues
       const commentsWithProfiles = await Promise.all(
-        (data || []).map(async (comment) => {
-          const { data: profile } = await supabase
-            .from('profiles')
+        ((data as any[]) || []).map(async (comment) => {
+          const { data: profile } = await db('profiles')
             .select('full_name')
             .eq('user_id', comment.user_id)
             .single();
@@ -78,8 +76,7 @@ export const Comments: React.FC<CommentsProps> = ({ articleId }) => {
 
     setLoading(true);
     try {
-      const { error } = await supabase
-        .from('comments')
+      const { error } = await db('comments')
         .insert({
           article_id: articleId,
           user_id: user.id,
@@ -113,8 +110,7 @@ export const Comments: React.FC<CommentsProps> = ({ articleId }) => {
 
     setLoading(true);
     try {
-      const { error } = await supabase
-        .from('comments')
+      const { error } = await db('comments')
         .insert({
           article_id: articleId,
           user_id: user.id,

@@ -45,7 +45,7 @@ const NewsArticle = () => {
         // Load some glossary terms for auto-linking
         if (allLetters.length > 0) {
           const terms = await Promise.all(
-            allLetters.slice(0, 5).map(letter => contentService.getGlossaryTermsByLetter(letter))
+            (allLetters as string[]).slice(0, 5).map((letter: string) => contentService.getGlossaryTermsByLetter(letter))
           );
           setGlossaryTerms(terms.flat());
         }
