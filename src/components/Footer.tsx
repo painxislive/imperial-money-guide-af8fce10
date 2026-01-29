@@ -44,6 +44,9 @@ const Footer = () => {
               <li><Link to="/tools" className="text-muted-foreground hover:text-foreground">All Calculators</Link></li>
               <li><Link to="/hidden-tools" className="text-muted-foreground hover:text-foreground">Hidden Tools</Link></li>
               <li><Link to="/dashboard" className="text-muted-foreground hover:text-foreground">Dashboard</Link></li>
+              <li><Link to="/dashboard/insights" className="text-muted-foreground hover:text-foreground">Insights</Link></li>
+              <li><Link to="/dashboard/reports" className="text-muted-foreground hover:text-foreground">Reports</Link></li>
+              <li><Link to="/pricing" className="text-muted-foreground hover:text-foreground">Pricing</Link></li>
             </ul>
           </div>
 
