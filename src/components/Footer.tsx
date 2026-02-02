@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
 import { Separator } from '@/components/ui/separator';
-import { NewsletterSignup } from '@/components/NewsletterSignup';
 
 const Footer = () => {
   // Generate A-Z alphabet links for glossary navigation
@@ -24,47 +23,31 @@ const Footer = () => {
             {alphabetLinks}
           </div>
           <p className="text-center text-sm text-muted-foreground">
-            Explore our comprehensive glossary of financial and cryptocurrency terms
+            Explore our comprehensive glossary of financial and economic terms
           </p>
         </div>
 
         <Separator className="mb-8" />
         
-        <div className="grid grid-cols-1 md:grid-cols-6 gap-8">
-          <div>
-            <h3 className="font-semibold mb-4">ImperialPedia</h3>
-            <p className="text-sm text-muted-foreground">
-              Your comprehensive finance and investment encyclopedia with latest news and powerful calculators.
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
+          <div className="md:col-span-2">
+            <h3 className="font-semibold mb-4">Imperialpedia</h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              A global finance and investing knowledge platform providing clear, unbiased explanations 
+              of finance, investing, banking, taxation, insurance, and economic concepts.
             </p>
-          </div>
-          
-          <div>
-            <h4 className="font-medium mb-4">Tools</h4>
-            <ul className="space-y-2 text-sm">
-              <li><Link to="/tools" className="text-muted-foreground hover:text-foreground">All Calculators</Link></li>
-              <li><Link to="/hidden-tools" className="text-muted-foreground hover:text-foreground">Hidden Tools</Link></li>
-              <li><Link to="/dashboard" className="text-muted-foreground hover:text-foreground">Dashboard</Link></li>
-              <li><Link to="/dashboard/insights" className="text-muted-foreground hover:text-foreground">Insights</Link></li>
-              <li><Link to="/dashboard/reports" className="text-muted-foreground hover:text-foreground">Reports</Link></li>
-              <li><Link to="/pricing" className="text-muted-foreground hover:text-foreground">Pricing</Link></li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="font-medium mb-4">News & Content</h4>
-            <ul className="space-y-2 text-sm">
-              <li><Link to="/news" className="text-muted-foreground hover:text-foreground">Latest News</Link></li>
-              <li><Link to="/articles" className="text-muted-foreground hover:text-foreground">Articles</Link></li>
-              <li><Link to="/topics/a" className="text-muted-foreground hover:text-foreground">Glossary</Link></li>
-            </ul>
+            <p className="text-xs text-muted-foreground">
+              All content is for educational and informational purposes only.
+            </p>
           </div>
           
           <div>
             <h4 className="font-medium mb-4">Resources</h4>
             <ul className="space-y-2 text-sm">
-              <li><Link to="/about" className="text-muted-foreground hover:text-foreground">About</Link></li>
-              <li><Link to="/contact" className="text-muted-foreground hover:text-foreground">Contact</Link></li>
-              <li><Link to="/admin" className="text-muted-foreground hover:text-foreground">Admin</Link></li>
+              <li><Link to="/articles" className="text-muted-foreground hover:text-foreground">Finance Guides</Link></li>
+              <li><Link to="/tools" className="text-muted-foreground hover:text-foreground">Calculators</Link></li>
+              <li><Link to="/topics/a" className="text-muted-foreground hover:text-foreground">Glossary</Link></li>
+              <li><Link to="/news" className="text-muted-foreground hover:text-foreground">Latest Articles</Link></li>
             </ul>
           </div>
           
@@ -72,22 +55,28 @@ const Footer = () => {
             <h4 className="font-medium mb-4">Company</h4>
             <ul className="space-y-2 text-sm">
               <li><Link to="/about" className="text-muted-foreground hover:text-foreground">About Us</Link></li>
+              <li><Link to="/contact" className="text-muted-foreground hover:text-foreground">Contact</Link></li>
               <li><Link to="/editorial" className="text-muted-foreground hover:text-foreground">Editorial Policy</Link></li>
-              <li><Link to="/privacy" className="text-muted-foreground hover:text-foreground">Privacy Policy</Link></li>
-              <li><Link to="/terms" className="text-muted-foreground hover:text-foreground">Terms of Service</Link></li>
-              <li><Link to="/disclaimer" className="text-muted-foreground hover:text-foreground">Disclaimer</Link></li>
             </ul>
           </div>
           
           <div>
-            <NewsletterSignup variant="footer" />
+            <h4 className="font-medium mb-4">Legal</h4>
+            <ul className="space-y-2 text-sm">
+              <li><Link to="/privacy" className="text-muted-foreground hover:text-foreground">Privacy Policy</Link></li>
+              <li><Link to="/terms" className="text-muted-foreground hover:text-foreground">Terms of Service</Link></li>
+              <li><Link to="/disclaimer" className="text-muted-foreground hover:text-foreground">Disclaimer</Link></li>
+            </ul>
           </div>
         </div>
         
         <Separator className="mt-8 mb-6" />
         
         <div className="text-center text-sm text-muted-foreground">
-          <p>&copy; 2024 ImperialPedia. All rights reserved. | Finance News & Tools Platform</p>
+          <p>&copy; {new Date().getFullYear()} Imperialpedia. All rights reserved.</p>
+          <p className="text-xs mt-2">
+            This website is for educational purposes only and does not provide financial, legal, or investment advice.
+          </p>
         </div>
       </div>
     </footer>

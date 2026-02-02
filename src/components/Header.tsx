@@ -1,25 +1,12 @@
-import { Search, Menu, BookOpen, TrendingUp, Moon, Sun, User, LogOut } from "lucide-react";
+import { Search, Menu, BookOpen, Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
-import { useAuth } from "@/hooks/useAuth";
-import { useNavigate } from "react-router-dom";
-import { useToast } from "@/hooks/use-toast";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { Link } from "react-router-dom";
 
 const Header = () => {
   const [isDark, setIsDark] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { user, profile, signOut, loading } = useAuth();
-  const navigate = useNavigate();
-  const { toast } = useToast();
 
   useEffect(() => {
     const isDarkMode = document.documentElement.classList.contains('dark');
@@ -31,47 +18,30 @@ const Header = () => {
     setIsDark(!isDark);
   };
 
-  const handleSignOut = async () => {
-    try {
-      await signOut();
-      navigate('/');
-      toast({
-        title: "Signed out",
-        description: "You have been successfully signed out.",
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to sign out. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
-
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <div className="flex items-center space-x-2">
+          <Link to="/" className="flex items-center space-x-2">
             <div className="flex items-center space-x-2">
-              <div className="finance-gradient p-2 rounded-lg shadow-finance">
+              <div className="bg-primary p-2 rounded-lg">
                 <BookOpen className="h-6 w-6 text-primary-foreground" />
               </div>
               <div>
-                <h1 className="text-xl font-bold">ImperialPedia</h1>
+                <h1 className="text-xl font-bold">Imperialpedia</h1>
                 <p className="text-xs text-muted-foreground hidden sm:block">Finance Encyclopedia</p>
               </div>
             </div>
-          </div>
+          </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-6">
-            <a href="/articles" className="text-sm font-medium hover:text-primary transition-finance">Articles</a>
-            <a href="#" className="text-sm font-medium hover:text-primary transition-finance">Terms</a>
-            <a href="/tools" className="text-sm font-medium hover:text-primary transition-finance">Calculators</a>
-            <a href="/hidden-tools" className="text-sm font-medium hover:text-primary transition-finance">Advanced Tools</a>
-            <a href="#" className="text-sm font-medium hover:text-primary transition-finance">Guides</a>
+            <Link to="/articles" className="text-sm font-medium hover:text-primary transition-colors">Guides</Link>
+            <Link to="/topics/a" className="text-sm font-medium hover:text-primary transition-colors">Glossary</Link>
+            <Link to="/tools" className="text-sm font-medium hover:text-primary transition-colors">Calculators</Link>
+            <Link to="/news" className="text-sm font-medium hover:text-primary transition-colors">News</Link>
+            <Link to="/about" className="text-sm font-medium hover:text-primary transition-colors">About</Link>
           </nav>
 
           {/* Search & Actions */}
@@ -80,54 +50,10 @@ const Header = () => {
             <div className="relative hidden sm:block">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
-                placeholder="Search finance terms..."
-                className="w-64 pl-10 pr-4 bg-muted/50 border-0 focus:bg-background transition-finance"
+                placeholder="Search terms..."
+                className="w-48 lg:w-64 pl-10 pr-4 bg-muted/50 border-0 focus:bg-background transition-colors"
               />
             </div>
-
-            {/* Auth Section */}
-            {!loading && (
-              user ? (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                      <User className="h-5 w-5" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-56" align="end" forceMount>
-                    <DropdownMenuLabel className="font-normal">
-                      <div className="flex flex-col space-y-1">
-                        <p className="text-sm font-medium leading-none">
-                          {profile?.full_name || user.email}
-                        </p>
-                        <p className="text-xs leading-none text-muted-foreground">
-                          {user.email}
-                        </p>
-                      </div>
-                    </DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => navigate('/dashboard')}>
-                      <User className="mr-2 h-4 w-4" />
-                      Dashboard
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={handleSignOut}>
-                      <LogOut className="mr-2 h-4 w-4" />
-                      Sign out
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              ) : (
-                <div className="hidden sm:flex items-center space-x-2">
-                  <Button variant="ghost" size="sm" onClick={() => navigate('/login')}>
-                    Sign in
-                  </Button>
-                  <Button size="sm" onClick={() => navigate('/signup')}>
-                    Sign up
-                  </Button>
-                </div>
-              )
-            )}
 
             {/* Theme Toggle */}
             <Button
@@ -170,49 +96,12 @@ const Header = () => {
               
               {/* Mobile Navigation */}
               <nav className="flex flex-col space-y-2">
-                <a href="/articles" className="px-3 py-2 text-sm font-medium hover:bg-muted rounded-lg transition-finance">Articles</a>
-                <a href="#" className="px-3 py-2 text-sm font-medium hover:bg-muted rounded-lg transition-finance">Terms</a>
-                <a href="/tools" className="px-3 py-2 text-sm font-medium hover:bg-muted rounded-lg transition-finance">Calculators</a>
-                <a href="/hidden-tools" className="px-3 py-2 text-sm font-medium hover:bg-muted rounded-lg transition-finance">Advanced Tools</a>
-                <a href="#" className="px-3 py-2 text-sm font-medium hover:bg-muted rounded-lg transition-finance">Guides</a>
-                
-                {/* Mobile Auth */}
-                {!loading && (
-                  user ? (
-                    <div className="pt-2 border-t">
-                      <div className="px-3 py-2 text-xs text-muted-foreground">
-                        {profile?.full_name || user.email}
-                      </div>
-                      <button 
-                        onClick={() => navigate('/dashboard')}
-                        className="w-full text-left px-3 py-2 text-sm font-medium hover:bg-muted rounded-lg transition-finance"
-                      >
-                        Dashboard
-                      </button>
-                      <button 
-                        onClick={handleSignOut}
-                        className="w-full text-left px-3 py-2 text-sm font-medium hover:bg-muted rounded-lg transition-finance"
-                      >
-                        Sign out
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="pt-2 border-t space-y-2">
-                      <button 
-                        onClick={() => navigate('/login')}
-                        className="w-full text-left px-3 py-2 text-sm font-medium hover:bg-muted rounded-lg transition-finance"
-                      >
-                        Sign in
-                      </button>
-                      <button 
-                        onClick={() => navigate('/signup')}
-                        className="w-full text-left px-3 py-2 text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 rounded-lg transition-finance"
-                      >
-                        Sign up
-                      </button>
-                    </div>
-                  )
-                )}
+                <Link to="/articles" className="px-3 py-2 text-sm font-medium hover:bg-muted rounded-lg transition-colors" onClick={() => setIsMenuOpen(false)}>Guides</Link>
+                <Link to="/topics/a" className="px-3 py-2 text-sm font-medium hover:bg-muted rounded-lg transition-colors" onClick={() => setIsMenuOpen(false)}>Glossary</Link>
+                <Link to="/tools" className="px-3 py-2 text-sm font-medium hover:bg-muted rounded-lg transition-colors" onClick={() => setIsMenuOpen(false)}>Calculators</Link>
+                <Link to="/news" className="px-3 py-2 text-sm font-medium hover:bg-muted rounded-lg transition-colors" onClick={() => setIsMenuOpen(false)}>News</Link>
+                <Link to="/about" className="px-3 py-2 text-sm font-medium hover:bg-muted rounded-lg transition-colors" onClick={() => setIsMenuOpen(false)}>About</Link>
+                <Link to="/contact" className="px-3 py-2 text-sm font-medium hover:bg-muted rounded-lg transition-colors" onClick={() => setIsMenuOpen(false)}>Contact</Link>
               </nav>
             </div>
           </div>

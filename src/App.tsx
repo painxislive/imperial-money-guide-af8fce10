@@ -21,6 +21,7 @@ import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 import { Premium } from "./pages/Premium";
 import { About } from "./pages/About";
+import Contact from "./pages/Contact";
 import Editorial from "./pages/Editorial";
 import Disclaimer from "./pages/Disclaimer";
 import { Privacy } from "./pages/Privacy";
@@ -67,6 +68,7 @@ const App = () => (
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/premium" element={<Premium />} />
               <Route path="/about" element={<About />} />
+              <Route path="/contact" element={<Contact />} />
               <Route path="/editorial" element={<Editorial />} />
               <Route path="/disclaimer" element={<Disclaimer />} />
               <Route path="/privacy" element={<Privacy />} />
