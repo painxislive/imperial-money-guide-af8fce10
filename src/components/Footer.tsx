@@ -6,7 +6,7 @@ const Footer = () => {
   const alphabetLinks = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(letter => (
     <Link
       key={letter}
-      to={`/topics/${letter.toLowerCase()}`}
+      to={`/glossary/letter/${letter.toLowerCase()}`}
       className="text-muted-foreground hover:text-foreground transition-colors text-sm font-medium"
     >
       {letter}
@@ -46,7 +46,7 @@ const Footer = () => {
             <ul className="space-y-2 text-sm">
               <li><Link to="/articles" className="text-muted-foreground hover:text-foreground">Finance Guides</Link></li>
               <li><Link to="/tools" className="text-muted-foreground hover:text-foreground">Calculators</Link></li>
-              <li><Link to="/topics/a" className="text-muted-foreground hover:text-foreground">Glossary</Link></li>
+              <li><Link to="/glossary" className="text-muted-foreground hover:text-foreground">Glossary</Link></li>
               <li><Link to="/news" className="text-muted-foreground hover:text-foreground">Latest Articles</Link></li>
             </ul>
           </div>
