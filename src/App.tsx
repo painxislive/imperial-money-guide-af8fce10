@@ -41,6 +41,11 @@ import CalculatorExplain from "./pages/CalculatorExplain";
 import CompareScenarios from "./pages/CompareScenarios";
 import BetaFeatures from "./pages/BetaFeatures";
 import Labs from "./pages/Labs";
+// Glossary Pages
+import Glossary from "./pages/Glossary";
+import GlossaryLetter from "./pages/GlossaryLetter";
+import GlossaryTerm from "./pages/GlossaryTerm";
+import AdminGlossary from "./pages/AdminGlossary";
 
 const queryClient = new QueryClient();
 
@@ -92,6 +97,12 @@ const App = () => (
               {/* Phase 3 - Experimental */}
               <Route path="/beta" element={<BetaFeatures />} />
               <Route path="/labs" element={<Labs />} />
+              {/* Glossary Routes */}
+              <Route path="/glossary" element={<Glossary />} />
+              <Route path="/glossary/letter/:letter" element={<GlossaryLetter />} />
+              <Route path="/glossary/term/:slug" element={<GlossaryTerm />} />
+              <Route path="/admin/glossary" element={<AdminGlossary />} />
+              <Route path="/admin/glossary" element={<AdminGlossary />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
