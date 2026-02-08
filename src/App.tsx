@@ -7,12 +7,18 @@ import { HelmetProvider } from "react-helmet-async";
 import { AuthProvider } from "@/hooks/useAuth";
 import Index from "./pages/Index";
 import Articles from "./pages/Articles";
+import ArticlesListPage from "./pages/ArticlesListPage";
+import ArticlePage from "./pages/ArticlePage";
 import News from "./pages/News";
 import NewsArticle from "./pages/NewsArticle";
 import CategoryPage from "./pages/CategoryPage";
+import CategoryLandingPage from "./pages/CategoryLandingPage";
 import AuthorProfile from "./pages/AuthorProfile";
 import TopicsLetter from "./pages/TopicsLetter";
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminArticles from "./pages/AdminArticles";
+import AdminUsers from "./pages/AdminUsers";
+import AdminGlossaryPage from "./pages/AdminGlossaryPage";
 import Tools from "./pages/Tools";
 import HiddenTools from "./pages/HiddenTools";
 import Login from "./pages/Login";
@@ -26,7 +32,6 @@ import Editorial from "./pages/Editorial";
 import Disclaimer from "./pages/Disclaimer";
 import { Privacy } from "./pages/Privacy";
 import { Terms } from "./pages/Terms";
-// Phase 3 Pages
 import Pricing from "./pages/Pricing";
 import Billing from "./pages/Billing";
 import PremiumTools from "./pages/PremiumTools";
@@ -41,11 +46,11 @@ import CalculatorExplain from "./pages/CalculatorExplain";
 import CompareScenarios from "./pages/CompareScenarios";
 import BetaFeatures from "./pages/BetaFeatures";
 import Labs from "./pages/Labs";
-// Glossary Pages
 import Glossary from "./pages/Glossary";
 import GlossaryLetter from "./pages/GlossaryLetter";
 import GlossaryTerm from "./pages/GlossaryTerm";
 import AdminGlossary from "./pages/AdminGlossary";
+import SecureEditPage from "./pages/SecureEditPage";
 
 const queryClient = new QueryClient();
 
@@ -59,18 +64,33 @@ const App = () => (
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />
-              <Route path="/articles" element={<Articles />} />
+              {/* Articles */}
+              <Route path="/articles" element={<ArticlesListPage />} />
+              <Route path="/article/:slug" element={<ArticlePage />} />
               <Route path="/news" element={<News />} />
               <Route path="/news/:slug" element={<NewsArticle />} />
+              {/* Category Landing Pages */}
+              <Route path="/finance" element={<CategoryLandingPage />} />
+              <Route path="/legal" element={<CategoryLandingPage />} />
+              <Route path="/insurance" element={<CategoryLandingPage />} />
               <Route path="/category/:category" element={<CategoryPage />} />
               <Route path="/author/:authorId" element={<AuthorProfile />} />
               <Route path="/topics/:letter" element={<TopicsLetter />} />
+              {/* Admin Routes */}
               <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/admin/articles" element={<AdminArticles />} />
+              <Route path="/admin/users" element={<AdminUsers />} />
+              <Route path="/admin/glossary" element={<AdminGlossaryPage />} />
+              {/* Secure Edit */}
+              <Route path="/edit/:token" element={<SecureEditPage />} />
+              {/* Tools */}
               <Route path="/tools" element={<Tools />} />
               <Route path="/hidden-tools" element={<HiddenTools />} />
+              {/* Auth */}
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/dashboard" element={<Dashboard />} />
+              {/* Static Pages */}
               <Route path="/premium" element={<Premium />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
@@ -78,32 +98,24 @@ const App = () => (
               <Route path="/disclaimer" element={<Disclaimer />} />
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/terms" element={<Terms />} />
-              {/* Phase 3 - Monetization & Premium */}
               <Route path="/pricing" element={<Pricing />} />
               <Route path="/billing" element={<Billing />} />
               <Route path="/premium/tools" element={<PremiumTools />} />
-              {/* Phase 3 - Trust & Compliance */}
               <Route path="/authors/verified" element={<VerifiedAuthors />} />
               <Route path="/article-update-history" element={<ArticleHistory />} />
               <Route path="/sources-and-citations" element={<SourcesCitations />} />
               <Route path="/risk-and-disclosures" element={<RiskDisclosures />} />
-              {/* Phase 3 - Dashboard & Analytics */}
               <Route path="/dashboard/insights" element={<DashboardInsights />} />
               <Route path="/dashboard/reports" element={<DashboardReports />} />
-              {/* Phase 3 - AI & Automation */}
               <Route path="/ai-insights" element={<AIInsights />} />
               <Route path="/calculator/:slug/explain" element={<CalculatorExplain />} />
               <Route path="/compare/scenarios" element={<CompareScenarios />} />
-              {/* Phase 3 - Experimental */}
               <Route path="/beta" element={<BetaFeatures />} />
               <Route path="/labs" element={<Labs />} />
-              {/* Glossary Routes */}
+              {/* Glossary */}
               <Route path="/glossary" element={<Glossary />} />
               <Route path="/glossary/letter/:letter" element={<GlossaryLetter />} />
               <Route path="/glossary/term/:slug" element={<GlossaryTerm />} />
-              <Route path="/admin/glossary" element={<AdminGlossary />} />
-              <Route path="/admin/glossary" element={<AdminGlossary />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
