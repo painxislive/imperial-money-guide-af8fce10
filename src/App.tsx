@@ -51,6 +51,7 @@ import GlossaryLetter from "./pages/GlossaryLetter";
 import GlossaryTerm from "./pages/GlossaryTerm";
 import AdminGlossary from "./pages/AdminGlossary";
 import SecureEditPage from "./pages/SecureEditPage";
+import AdminAutomation from "./pages/AdminAutomation";
 
 const queryClient = new QueryClient();
 
@@ -81,6 +82,7 @@ const App = () => (
               <Route path="/admin/articles" element={<AdminArticles />} />
               <Route path="/admin/users" element={<AdminUsers />} />
               <Route path="/admin/glossary" element={<AdminGlossaryPage />} />
+              <Route path="/admin/automation" element={<AdminAutomation />} />
               {/* Secure Edit */}
               <Route path="/edit/:token" element={<SecureEditPage />} />
               {/* Tools */}

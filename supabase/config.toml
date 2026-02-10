@@ -1,1 +1,10 @@
 project_id = "tjutdnnqlkujzltpvpwd"
+
+[functions.detect-trends]
+verify_jwt = false
+
+[functions.generate-content]
+verify_jwt = false
+
+[functions.publish-content]
+verify_jwt = false
