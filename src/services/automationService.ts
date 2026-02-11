@@ -152,7 +152,8 @@ export const automationService = {
   async getDraftArticles(limit = 50) {
     const { data } = await db("articles")
       .select("*")
-      .eq("status", "draft")
+      .eq("is_published", false)
+      .eq("source_type", "ai_generated")
       .order("created_at", { ascending: false })
       .limit(limit);
     return data || [];
@@ -237,7 +238,7 @@ export const automationService = {
       db("articles").select("*", { count: "exact", head: true }),
       db("articles").select("*", { count: "exact", head: true }).gte("created_at", today),
       db("detected_trends").select("*", { count: "exact", head: true }).eq("status", "pending"),
-      db("articles").select("*", { count: "exact", head: true }).eq("status", "draft"),
+      db("articles").select("*", { count: "exact", head: true }).eq("is_published", false).eq("source_type", "ai_generated"),
       db("tracked_keywords").select("*", { count: "exact", head: true }).eq("is_active", true),
     ]);
 

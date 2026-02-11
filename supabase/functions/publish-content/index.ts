@@ -33,7 +33,7 @@ Deno.serve(async (req) => {
         const { data: article, error } = await supabase
           .from("articles")
           .update({
-            status: "published",
+            is_published: true,
             published_at: new Date().toISOString()
           })
           .eq("id", body.article_id)
@@ -60,7 +60,7 @@ Deno.serve(async (req) => {
 
         const { data: article, error } = await supabase
           .from("articles")
-          .update({ status: "archived" })
+          .update({ is_published: false })
           .eq("id", body.article_id)
           .select()
           .single();
@@ -92,7 +92,7 @@ Deno.serve(async (req) => {
         const { data, error } = await supabase
           .from("articles")
           .update({
-            status: "published",
+            is_published: true,
             published_at: new Date().toISOString()
           })
           .in("id", body.article_ids)
@@ -111,7 +111,7 @@ Deno.serve(async (req) => {
 
         const { data, error } = await supabase
           .from("articles")
-          .update({ status: "archived" })
+          .update({ is_published: false })
           .in("id", body.article_ids)
           .select();
 

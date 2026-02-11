@@ -27,7 +27,6 @@ interface GenerateRequest {
   trend_id?: string;
   keyword?: string;
   category?: string;
-  format?: "trending" | "explained" | "market_impact";
 }
 
 function generateSlug(title: string): string {
@@ -40,14 +39,12 @@ function generateSlug(title: string): string {
     .replace(/^-|-$/g, "");
 }
 
-function selectArticleFormat(keyword: string, category: string): { format: string; titleTemplate: string } {
+function selectArticleFormat(keyword: string): { format: string; titleTemplate: string } {
   const formats = [
     { format: "trending", titleTemplate: `Why ${keyword} Is Trending Today` },
     { format: "explained", titleTemplate: `Explained: ${keyword}` },
     { format: "market_impact", titleTemplate: `What ${keyword} Means for Markets` },
   ];
-
-  // Rotate based on keyword hash to vary formats
   const hash = keyword.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0);
   return formats[hash % formats.length];
 }
@@ -102,13 +99,11 @@ function contentSafetyCheck(content: string): { safe: boolean; issues: string[] 
     }
   }
 
-  // Check for excessive exclamation marks (hype indicator)
   const exclamationCount = (content.match(/!/g) || []).length;
   if (exclamationCount > 3) {
     issues.push("Too many exclamation marks (hype indicator)");
   }
 
-  // Check for all-caps words (excluding common acronyms)
   const capsWords = content.match(/\b[A-Z]{4,}\b/g) || [];
   const allowedCaps = ["NYSE", "NASDAQ", "FTSE", "HTML", "JSON", "FOMC", "FDIC", "CFTC"];
   const badCaps = capsWords.filter(w => !allowedCaps.includes(w));
@@ -116,7 +111,6 @@ function contentSafetyCheck(content: string): { safe: boolean; issues: string[] 
     issues.push("Too many ALL-CAPS words");
   }
 
-  // Check minimum length
   if (content.length < 500) {
     issues.push("Content too short (minimum 500 characters)");
   }
@@ -130,14 +124,14 @@ async function generateWithAI(prompt: string): Promise<string> {
     throw new Error("LOVABLE_API_KEY not configured");
   }
 
-  const response = await fetch("https://api.openai.com/v1/chat/completions", {
+  const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
     method: "POST",
     headers: {
       "Authorization": `Bearer ${apiKey}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: "gpt-4o-mini",
+      model: "google/gemini-2.5-flash",
       messages: [
         {
           role: "system",
@@ -151,6 +145,12 @@ async function generateWithAI(prompt: string): Promise<string> {
   });
 
   if (!response.ok) {
+    if (response.status === 429) {
+      throw new Error("Rate limited - please try again later");
+    }
+    if (response.status === 402) {
+      throw new Error("AI credits exhausted - please add funds");
+    }
     const err = await response.text();
     throw new Error(`AI generation failed: ${err}`);
   }
@@ -176,7 +176,6 @@ function parseGeneratedContent(raw: string): {
     content = raw.replace(/<metadata>[\s\S]*?<\/metadata>/, "").trim();
   }
 
-  // Append risk disclaimer
   content += "\n\n" + REQUIRED_DISCLAIMER;
 
   return { content, metadata };
@@ -210,7 +209,7 @@ Deno.serve(async (req) => {
       .select("setting_value")
       .eq("setting_key", "daily_post_limit")
       .single();
-    
+
     const dailyLimit = limitSetting?.setting_value?.value || 25;
 
     const today = new Date().toISOString().split("T")[0];
@@ -237,7 +236,6 @@ Deno.serve(async (req) => {
         .single();
       trend = data;
     } else {
-      // Get next pending trend
       const { data } = await supabase
         .from("detected_trends")
         .select("*")
@@ -266,8 +264,7 @@ Deno.serve(async (req) => {
         .eq("id", trend.id);
     }
 
-    // Select format and build prompt
-    const { format, titleTemplate } = selectArticleFormat(keyword, category);
+    const { format, titleTemplate } = selectArticleFormat(keyword);
     const prompt = buildPrompt(keyword, category, format, titleTemplate);
 
     console.log(`Generating article for: "${keyword}" (format: ${format})`);
@@ -284,7 +281,7 @@ Deno.serve(async (req) => {
       .select()
       .single();
 
-    // Generate content
+    // Generate content via Lovable AI gateway
     const rawContent = await generateWithAI(prompt);
     const { content, metadata } = parseGeneratedContent(rawContent);
 
@@ -310,9 +307,9 @@ Deno.serve(async (req) => {
         .eq("id", pipelineLog?.id);
 
       return new Response(
-        JSON.stringify({ 
-          message: "Content rejected by safety filters", 
-          issues: safetyResult.issues 
+        JSON.stringify({
+          message: "Content rejected by safety filters",
+          issues: safetyResult.issues
         }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
@@ -326,34 +323,31 @@ Deno.serve(async (req) => {
       .single();
 
     const publishMode = publishModeSetting?.setting_value?.mode || "approval_required";
-    
-    // Check total published count for hybrid mode
+
     const { count: totalPublished } = await supabase
       .from("articles")
       .select("*", { count: "exact", head: true })
       .eq("source_type", "ai_generated")
-      .eq("status", "published");
+      .eq("is_published", true);
 
     const hybridThreshold = publishModeSetting?.setting_value?.hybrid_threshold || 50;
-    const shouldAutoPublish = publishMode === "auto_publish" || 
+    const shouldAutoPublish = publishMode === "auto_publish" ||
       (publishMode === "hybrid" && (totalPublished || 0) >= hybridThreshold);
 
     const title = metadata.seo_title || titleTemplate;
     const slug = generateSlug(title) + "-" + Date.now().toString(36);
 
-    // Create article
+    // Create article (matching existing schema: is_published boolean, content field)
     const { data: article, error: articleError } = await supabase
       .from("articles")
       .insert({
         title,
         slug,
-        preview_content: metadata.excerpt || content.substring(0, 300),
-        full_content: content,
-        excerpt: metadata.excerpt || null,
-        category_id: null, // Will be matched later
-        is_premium: false,
+        content,
+        excerpt: metadata.excerpt || content.substring(0, 300),
+        category: category,
+        is_published: shouldAutoPublish,
         is_featured: false,
-        status: shouldAutoPublish ? "published" : "draft",
         seo_title: metadata.seo_title || title,
         seo_description: metadata.seo_description || null,
         tags: metadata.tags || [keyword],
@@ -372,7 +366,7 @@ Deno.serve(async (req) => {
     if (trend) {
       await supabase
         .from("detected_trends")
-        .update({ 
+        .update({
           status: "processed",
           article_id: article.id
         })
@@ -388,7 +382,6 @@ Deno.serve(async (req) => {
         output_data: {
           title: article.title,
           slug: article.slug,
-          status: article.status,
           auto_published: shouldAutoPublish,
           word_count: content.split(/\s+/).length
         }
@@ -402,7 +395,7 @@ Deno.serve(async (req) => {
           id: article.id,
           title: article.title,
           slug: article.slug,
-          status: article.status
+          is_published: article.is_published
         }
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
