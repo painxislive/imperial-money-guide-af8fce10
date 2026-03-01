@@ -52,6 +52,11 @@ import GlossaryTerm from "./pages/GlossaryTerm";
 import AdminGlossary from "./pages/AdminGlossary";
 import SecureEditPage from "./pages/SecureEditPage";
 import AdminAutomation from "./pages/AdminAutomation";
+import EnterpriseDashboard from "./pages/enterprise/EnterpriseDashboard";
+import EnterpriseRoles from "./pages/enterprise/EnterpriseRoles";
+import EnterpriseWorkflow from "./pages/enterprise/EnterpriseWorkflow";
+import EnterpriseAudit from "./pages/enterprise/EnterpriseAudit";
+import EnterprisePlaceholder from "./pages/enterprise/EnterprisePlaceholder";
 
 const queryClient = new QueryClient();
 
@@ -118,6 +123,18 @@ const App = () => (
               <Route path="/glossary" element={<Glossary />} />
               <Route path="/glossary/letter/:letter" element={<GlossaryLetter />} />
               <Route path="/glossary/term/:slug" element={<GlossaryTerm />} />
+              {/* Enterprise Routes */}
+              <Route path="/enterprise" element={<EnterpriseDashboard />} />
+              <Route path="/enterprise/roles" element={<EnterpriseRoles />} />
+              <Route path="/enterprise/workflow" element={<EnterpriseWorkflow />} />
+              <Route path="/enterprise/audit" element={<EnterpriseAudit />} />
+              <Route path="/enterprise/users" element={<EnterprisePlaceholder title="User Management" description="View and manage users, assign roles." module="User Management" />} />
+              <Route path="/enterprise/analytics" element={<EnterprisePlaceholder title="Analytics Engine" description="Article metrics, revenue, performance dashboards." module="Analytics" />} />
+              <Route path="/enterprise/monetization" element={<EnterprisePlaceholder title="Monetization Control" description="Ads, affiliates, subscriptions management." module="Monetization" />} />
+              <Route path="/enterprise/seo" element={<EnterprisePlaceholder title="SEO Control Center" description="Redirects, schema, sitemap, canonical management." module="SEO" />} />
+              <Route path="/enterprise/security" element={<EnterprisePlaceholder title="Security & Audit" description="IP whitelist, rate limits, feature flags." module="Security" />} />
+              <Route path="/enterprise/feature-flags" element={<EnterprisePlaceholder title="Feature Flags" description="Toggle features, A/B experiments, gradual rollout." module="Feature Flags" />} />
+              <Route path="/enterprise/system" element={<EnterprisePlaceholder title="System Settings" description="Site config, API keys, branding, SMTP." module="System Settings" />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
