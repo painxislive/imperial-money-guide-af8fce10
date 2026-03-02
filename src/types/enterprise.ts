@@ -106,6 +106,11 @@ export interface Article {
   scheduled_at: string | null;
   published_at: string | null;
   view_count: number;
+  reading_time: number | null;
+  word_count: number;
+  meta_title: string | null;
+  meta_description: string | null;
+  internal_link_count: number;
   created_by: string | null;
   updated_by: string | null;
   created_at: string;

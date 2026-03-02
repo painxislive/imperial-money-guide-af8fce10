@@ -12,3 +12,15 @@ Allow: /
 
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /enterprise
+Disallow: /enterprise/*
+Disallow: /edit/*
+Disallow: /dashboard
+Disallow: /dashboard/*
+Disallow: /billing
+Disallow: /login
+Disallow: /signup
+
+Sitemap: https://imperialpedia.com/sitemap.xml
