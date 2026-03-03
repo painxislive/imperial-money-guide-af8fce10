@@ -12,13 +12,17 @@ import { useAuth } from '@/hooks/useAuth';
 import { useRole } from '@/hooks/useRole';
 import type { Article } from '@/types/enterprise';
 import { SEO, generateBreadcrumbSchema } from '@/utils/seo';
-import { Calendar, Clock, User, Tag, Lock, ChevronRight, BookOpen, Share2 } from 'lucide-react';
+import { Calendar, Clock, User, Lock, ChevronRight, Share2, BookOpen, CheckCircle, ExternalLink } from 'lucide-react';
+import ArticleFAQSection from '@/components/article/ArticleFAQSection';
+import ArticleSourcesSection from '@/components/article/ArticleSourcesSection';
+import ArticleRelated from '@/components/article/ArticleRelated';
+import { NewsletterSignup } from '@/components/NewsletterSignup';
 
 const ArticlePage = () => {
   const { slug } = useParams<{ slug: string }>();
   const { user } = useAuth();
   const { isPremium, isAdmin } = useRole();
-  
+
   const [article, setArticle] = useState<Article | null>(null);
   const [relatedArticles, setRelatedArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
@@ -79,15 +83,14 @@ const ArticlePage = () => {
     );
   }
 
-  // Structured data — all pulled from DB, nothing hardcoded
   const breadcrumbs = [
     { name: 'Home', url: 'https://imperialpedia.com/' },
     { name: 'Articles', url: 'https://imperialpedia.com/articles' },
-    ...(article.category ? [{ name: article.category.name, url: `https://imperialpedia.com/category/${article.category.slug}` }] : []),
+    ...(article.category ? [{ name: article.category.name, url: `https://imperialpedia.com/${article.category.slug}` }] : []),
     { name: article.title, url: `https://imperialpedia.com/article/${article.slug}` },
   ];
 
-  const articleSchema = {
+  const articleSchema: any = {
     "@context": "https://schema.org",
     "@type": article.schema_type || "Article",
     "headline": article.meta_title || article.seo_title || article.title,
@@ -112,23 +115,33 @@ const ArticlePage = () => {
     "articleSection": article.category?.name || undefined,
   };
 
+  // FAQ Schema
+  const faqSchema = article.faq_items?.length ? {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": article.faq_items.map(faq => ({
+      "@type": "Question",
+      "name": faq.question,
+      "acceptedAnswer": { "@type": "Answer", "text": faq.answer }
+    }))
+  } : null;
+
   const orgSchema = {
     "@context": "https://schema.org",
     "@type": "Organization",
     "name": "ImperialPedia",
     "url": "https://imperialpedia.com",
     "logo": "https://imperialpedia.com/logo.png",
-    "sameAs": [],
   };
 
-  const structuredData = [articleSchema, generateBreadcrumbSchema(breadcrumbs), orgSchema];
+  const structuredData = [articleSchema, generateBreadcrumbSchema(breadcrumbs), orgSchema, faqSchema].filter(Boolean);
 
   return (
     <div className="min-h-screen bg-background">
       <SEO
         title={`${article.meta_title || article.seo_title || article.title} | ImperialPedia`}
         description={article.meta_description || article.seo_description || article.excerpt || ''}
-        image={article.featured_image || undefined}
+        image={article.og_image || article.featured_image || undefined}
         url={`https://imperialpedia.com/article/${article.slug}`}
         type="article"
         structuredData={structuredData}
@@ -137,14 +150,14 @@ const ArticlePage = () => {
 
       <main className="container mx-auto px-4 py-8">
         {/* Breadcrumbs */}
-        <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-6" aria-label="Breadcrumb">
+        <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-6 flex-wrap" aria-label="Breadcrumb">
           {breadcrumbs.map((crumb, idx) => (
             <span key={crumb.url} className="flex items-center gap-2">
               {idx > 0 && <ChevronRight className="h-3 w-3" />}
               {idx === breadcrumbs.length - 1 ? (
-                <span className="text-foreground">{crumb.name}</span>
+                <span className="text-foreground line-clamp-1">{crumb.name}</span>
               ) : (
-                <Link to={new URL(crumb.url).pathname} className="hover:text-primary transition-colors">
+                <Link to={new URL(crumb.url).pathname} className="hover:text-primary transition-colors whitespace-nowrap">
                   {crumb.name}
                 </Link>
               )}
@@ -156,38 +169,61 @@ const ArticlePage = () => {
           {/* Main Content */}
           <article className="lg:col-span-2">
             <header className="mb-8">
-              <div className="flex items-center gap-2 mb-4">
+              <div className="flex items-center gap-2 mb-4 flex-wrap">
                 {article.category && (
-                  <Badge variant="secondary">{article.category.name}</Badge>
+                  <Link to={`/${article.category.slug}`}>
+                    <Badge variant="secondary">{article.category.name}</Badge>
+                  </Link>
                 )}
                 {article.is_premium && (
                   <Badge variant="default" className="gap-1"><Lock className="h-3 w-3" />Premium</Badge>
                 )}
               </div>
-              
-              <h1 className="text-4xl font-bold mb-4">{article.title}</h1>
-              
+
+              <h1 className="text-3xl lg:text-4xl font-bold mb-4">{article.title}</h1>
+
               {article.excerpt && (
-                <p className="text-xl text-muted-foreground mb-6">{article.excerpt}</p>
+                <p className="text-lg lg:text-xl text-muted-foreground mb-6">{article.excerpt}</p>
               )}
 
               <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
                 {article.author && (
                   <Link to={`/author/${article.author.slug}`} className="flex items-center gap-2 hover:text-primary transition-colors">
                     <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-                      <User className="h-4 w-4 text-primary" />
+                      {article.author.avatar_url ? (
+                        <img src={article.author.avatar_url} alt={article.author.name} className="h-8 w-8 rounded-full object-cover" />
+                      ) : (
+                        <User className="h-4 w-4 text-primary" />
+                      )}
                     </div>
                     <div>
                       <span className="font-medium text-foreground">{article.author.name}</span>
-                      {article.author.title && <span className="block text-xs">{article.author.title}</span>}
+                      {article.author.credentials && <span className="block text-xs">{article.author.credentials}</span>}
                     </div>
                   </Link>
                 )}
-                <Separator orientation="vertical" className="h-6" />
+
+                {article.reviewer && (
+                  <>
+                    <Separator orientation="vertical" className="h-6" />
+                    <div className="flex items-center gap-1">
+                      <CheckCircle className="h-4 w-4 text-accent" />
+                      <span>Reviewed by </span>
+                      <Link to={`/author/${article.reviewer.slug}`} className="font-medium text-foreground hover:text-primary">
+                        {article.reviewer.name}
+                      </Link>
+                    </div>
+                  </>
+                )}
+
+                <Separator orientation="vertical" className="h-6 hidden sm:block" />
                 <div className="flex items-center gap-1">
                   <Calendar className="h-4 w-4" />
                   <span>{formatDate(article.published_at || article.created_at)}</span>
                 </div>
+                {article.updated_at !== article.published_at && (
+                  <span className="text-xs">(Updated {formatDate(article.updated_at)})</span>
+                )}
                 {article.reading_time && (
                   <div className="flex items-center gap-1">
                     <Clock className="h-4 w-4" />
@@ -203,7 +239,7 @@ const ArticlePage = () => {
 
             {!article.is_premium && <AdSenseSlot slot="article-top" className="mb-8" />}
 
-            <div className="prose prose-lg max-w-none">
+            <div className="prose prose-lg max-w-none dark:prose-invert">
               <div dangerouslySetInnerHTML={{ __html: article.preview_content || '' }} />
               {canViewFullContent() ? (
                 <div dangerouslySetInnerHTML={{ __html: article.full_content || '' }} />
@@ -224,27 +260,19 @@ const ArticlePage = () => {
 
             {!article.is_premium && <AdSenseSlot slot="article-middle" className="my-8" />}
 
-            {/* Related Articles Section */}
-            {relatedArticles.length > 0 && (
-              <div className="mt-10">
-                <h2 className="text-2xl font-bold mb-4">Related Articles</h2>
-                <div className="grid sm:grid-cols-2 gap-4">
-                  {relatedArticles.map(related => (
-                    <Link key={related.id} to={`/article/${related.slug}`} className="group">
-                      <Card className="h-full hover:border-primary/50 transition-colors">
-                        <CardContent className="pt-4">
-                          {related.featured_image && (
-                            <img src={related.featured_image} alt={related.title} className="w-full h-32 object-cover rounded mb-3" loading="lazy" />
-                          )}
-                          <h3 className="font-semibold group-hover:text-primary transition-colors line-clamp-2">{related.title}</h3>
-                          <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{related.excerpt}</p>
-                        </CardContent>
-                      </Card>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            )}
+            {/* FAQ Section */}
+            <ArticleFAQSection faqItems={article.faq_items} />
+
+            {/* Sources Section */}
+            <ArticleSourcesSection sources={article.sources} />
+
+            {/* Related Articles */}
+            <ArticleRelated articles={relatedArticles} />
+
+            {/* Newsletter */}
+            <div className="mt-10">
+              <NewsletterSignup />
+            </div>
 
             <div className="mt-8 p-4 bg-muted rounded-lg text-sm text-muted-foreground">
               <p><strong>Disclaimer:</strong> This article is for educational purposes only and does not constitute financial, legal, or investment advice.</p>
@@ -285,8 +313,8 @@ const ArticlePage = () => {
                     </div>
                     <div>
                       <p className="font-medium group-hover:text-primary transition-colors">{article.author.name}</p>
-                      <p className="text-sm text-muted-foreground">{article.author.title}</p>
-                      {article.author.bio && <p className="text-sm mt-2">{article.author.bio}</p>}
+                      {article.author.credentials && <p className="text-sm text-muted-foreground">{article.author.credentials}</p>}
+                      {article.author.bio && <p className="text-sm mt-2 line-clamp-3">{article.author.bio}</p>}
                     </div>
                   </Link>
                 </CardContent>

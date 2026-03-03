@@ -50,7 +50,6 @@ export interface AuditLog {
   metadata: Record<string, any>;
   ip_address: string | null;
   created_at: string;
-  // Virtual
   user_email?: string;
   user_name?: string;
 }
@@ -62,10 +61,15 @@ export interface Author {
   slug: string;
   title: string | null;
   bio: string | null;
+  credentials: string | null;
   avatar_url: string | null;
+  profile_image: string | null;
+  linkedin_url: string | null;
+  twitter_url: string | null;
+  expertise_tags: string[];
   is_verified: boolean;
+  is_reviewer: boolean;
   social_links: Record<string, string>;
-  expertise: string[];
   created_at: string;
   updated_at: string;
 }
@@ -75,6 +79,10 @@ export interface Category {
   name: string;
   slug: string;
   description: string | null;
+  meta_title: string | null;
+  meta_description: string | null;
+  pillar_content: string | null;
+  faq_items: Array<{ question: string; answer: string }>;
   icon: string | null;
   parent_id: string | null;
   seo_title: string | null;
@@ -93,8 +101,10 @@ export interface Article {
   preview_content: string | null;
   full_content: string | null;
   featured_image: string | null;
+  og_image: string | null;
   category_id: string | null;
   author_id: string | null;
+  reviewed_by: string | null;
   status: ContentStatus;
   is_premium: boolean;
   is_featured: boolean;
@@ -103,8 +113,11 @@ export interface Article {
   schema_type: string;
   canonical_url: string | null;
   noindex: boolean;
+  sources: Array<{ title: string; url: string }>;
+  faq_items: Array<{ question: string; answer: string }>;
   scheduled_at: string | null;
   published_at: string | null;
+  last_reviewed_at: string | null;
   view_count: number;
   reading_time: number | null;
   word_count: number;
@@ -115,9 +128,10 @@ export interface Article {
   updated_by: string | null;
   created_at: string;
   updated_at: string;
-  // Virtual
+  // Virtual joins
   author?: Author;
   category?: Category;
+  reviewer?: Author;
 }
 
 export interface ArticleVersion {
@@ -174,6 +188,28 @@ export interface GlossaryTerm {
   view_count: number;
   published_at: string | null;
   created_at: string;
+  updated_at: string;
+}
+
+export interface AutoLinkTerm {
+  id: string;
+  keyword: string;
+  target_url: string;
+  priority: number;
+  is_active: boolean;
+  created_at: string;
+}
+
+export interface OrganizationSettings {
+  id: string;
+  name: string;
+  logo_url: string | null;
+  founding_date: string | null;
+  contact_email: string;
+  address: string | null;
+  social_links: Record<string, string>;
+  editorial_policy_url: string;
+  disclaimer_url: string;
   updated_at: string;
 }
 
