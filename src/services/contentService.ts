@@ -1,5 +1,5 @@
 import { db } from '@/lib/supabase-helpers';
-import type { Article, Author, Category } from '@/types/enterprise';
+import type { Article, Author, Category, OrganizationSettings } from '@/types/enterprise';
 
 /**
  * Public-facing content service — only fetches published data.
@@ -7,7 +7,7 @@ import type { Article, Author, Category } from '@/types/enterprise';
 export const contentService = {
   async getPublishedArticle(slug: string): Promise<Article | null> {
     const { data, error } = await db('articles')
-      .select('*, author:authors(*), category:categories(*)')
+      .select('*, author:authors!articles_author_id_fkey(*), category:categories(*), reviewer:authors!articles_reviewed_by_fkey(*)')
       .eq('slug', slug)
       .eq('status', 'published')
       .single();
@@ -30,13 +30,14 @@ export const contentService = {
 
   async getPublishedArticles(params?: {
     categorySlug?: string;
+    authorSlug?: string;
     featured?: boolean;
     limit?: number;
     offset?: number;
     search?: string;
   }): Promise<Article[]> {
     let query = db('articles')
-      .select('*, author:authors(*), category:categories(*)')
+      .select('*, author:authors!articles_author_id_fkey(*), category:categories(*)')
       .eq('status', 'published')
       .order('published_at', { ascending: false });
 
@@ -50,6 +51,9 @@ export const contentService = {
     let articles = (data || []) as Article[];
     if (params?.categorySlug) {
       articles = articles.filter(a => a.category?.slug === params.categorySlug);
+    }
+    if (params?.authorSlug) {
+      articles = articles.filter(a => a.author?.slug === params.authorSlug);
     }
     if (params?.search) {
       const s = params.search.toLowerCase();
@@ -70,11 +74,21 @@ export const contentService = {
 
     const ids = data.map((r: any) => r.related_article_id);
     const { data: articles } = await db('articles')
-      .select('*, author:authors(*), category:categories(*)')
+      .select('*, author:authors!articles_author_id_fkey(*), category:categories(*)')
       .in('id', ids)
       .eq('status', 'published');
 
     return (articles || []) as Article[];
+  },
+
+  async getReviewedArticles(authorId: string): Promise<Article[]> {
+    const { data, error } = await db('articles')
+      .select('*, category:categories(*)')
+      .eq('reviewed_by', authorId)
+      .eq('status', 'published')
+      .order('published_at', { ascending: false });
+    if (error) return [];
+    return (data || []) as Article[];
   },
 
   async getCategories(): Promise<Category[]> {
@@ -96,11 +110,40 @@ export const contentService = {
     return data as Category;
   },
 
+  async getAuthorBySlug(slug: string): Promise<Author | null> {
+    const { data, error } = await db('authors')
+      .select('*')
+      .eq('slug', slug)
+      .single();
+    if (error) return null;
+    return data as Author;
+  },
+
+  async getOrganizationSettings(): Promise<OrganizationSettings | null> {
+    const { data, error } = await db('organization_settings')
+      .select('*')
+      .limit(1)
+      .single();
+    if (error) return null;
+    return data as OrganizationSettings;
+  },
+
   async getPublishedGlossaryTerms(): Promise<any[]> {
     const { data, error } = await db('glossary_terms')
       .select('term, slug, updated_at')
       .eq('status', 'published')
       .order('term');
+    if (error) return [];
+    return data || [];
+  },
+
+  async getGlossaryTermsByCategory(categorySlug: string): Promise<any[]> {
+    const { data, error } = await db('glossary_terms')
+      .select('term, slug, short_definition')
+      .eq('status', 'published')
+      .eq('category', categorySlug)
+      .order('term')
+      .limit(10);
     if (error) return [];
     return data || [];
   },

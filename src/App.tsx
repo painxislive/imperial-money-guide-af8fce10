@@ -6,13 +6,12 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { AuthProvider } from "@/hooks/useAuth";
 import Index from "./pages/Index";
-import Articles from "./pages/Articles";
 import ArticlesListPage from "./pages/ArticlesListPage";
 import ArticlePage from "./pages/ArticlePage";
 import News from "./pages/News";
 import NewsArticle from "./pages/NewsArticle";
+import CategoryPillarPage from "./pages/CategoryPillarPage";
 import CategoryPage from "./pages/CategoryPage";
-import CategoryLandingPage from "./pages/CategoryLandingPage";
 import AuthorProfile from "./pages/AuthorProfile";
 import TopicsLetter from "./pages/TopicsLetter";
 import AdminDashboard from "./pages/AdminDashboard";
@@ -58,6 +57,10 @@ import EnterpriseWorkflow from "./pages/enterprise/EnterpriseWorkflow";
 import EnterpriseAudit from "./pages/enterprise/EnterpriseAudit";
 import EnterprisePlaceholder from "./pages/enterprise/EnterprisePlaceholder";
 import EnterpriseSEO from "./pages/enterprise/EnterpriseSEO";
+import EnterpriseAutoLinks from "./pages/enterprise/EnterpriseAutoLinks";
+import EnterpriseAuthors from "./pages/enterprise/EnterpriseAuthors";
+import EnterpriseOrgSettings from "./pages/enterprise/EnterpriseOrgSettings";
+import EnterpriseCategorySEO from "./pages/enterprise/EnterpriseCategorySEO";
 
 const queryClient = new QueryClient();
 
@@ -76,10 +79,12 @@ const App = () => (
               <Route path="/article/:slug" element={<ArticlePage />} />
               <Route path="/news" element={<News />} />
               <Route path="/news/:slug" element={<NewsArticle />} />
-              {/* Category Landing Pages */}
-              <Route path="/finance" element={<CategoryLandingPage />} />
-              <Route path="/legal" element={<CategoryLandingPage />} />
-              <Route path="/insurance" element={<CategoryLandingPage />} />
+              {/* Category Pillar Pages */}
+              <Route path="/crypto" element={<CategoryPillarPage />} />
+              <Route path="/stocks" element={<CategoryPillarPage />} />
+              <Route path="/personal-finance" element={<CategoryPillarPage />} />
+              <Route path="/investing" element={<CategoryPillarPage />} />
+              <Route path="/banking" element={<CategoryPillarPage />} />
               <Route path="/category/:category" element={<CategoryPage />} />
               <Route path="/author/:authorId" element={<AuthorProfile />} />
               <Route path="/topics/:letter" element={<TopicsLetter />} />
@@ -89,7 +94,6 @@ const App = () => (
               <Route path="/admin/users" element={<AdminUsers />} />
               <Route path="/admin/glossary" element={<AdminGlossaryPage />} />
               <Route path="/admin/automation" element={<AdminAutomation />} />
-              {/* Secure Edit */}
               <Route path="/edit/:token" element={<SecureEditPage />} />
               {/* Tools */}
               <Route path="/tools" element={<Tools />} />
@@ -129,10 +133,13 @@ const App = () => (
               <Route path="/enterprise/roles" element={<EnterpriseRoles />} />
               <Route path="/enterprise/workflow" element={<EnterpriseWorkflow />} />
               <Route path="/enterprise/audit" element={<EnterpriseAudit />} />
-              <Route path="/enterprise/users" element={<EnterprisePlaceholder title="User Management" description="View and manage users, assign roles." module="User Management" />} />
-              <Route path="/enterprise/analytics" element={<EnterprisePlaceholder title="Analytics Engine" description="Article metrics, revenue, performance dashboards." module="Analytics" />} />
-              <Route path="/enterprise/monetization" element={<EnterprisePlaceholder title="Monetization Control" description="Ads, affiliates, subscriptions management." module="Monetization" />} />
+              <Route path="/enterprise/authors" element={<EnterpriseAuthors />} />
+              <Route path="/enterprise/auto-links" element={<EnterpriseAutoLinks />} />
+              <Route path="/enterprise/org-settings" element={<EnterpriseOrgSettings />} />
+              <Route path="/enterprise/category-seo" element={<EnterpriseCategorySEO />} />
               <Route path="/enterprise/seo" element={<EnterpriseSEO />} />
+              <Route path="/enterprise/monetization" element={<EnterprisePlaceholder title="Monetization Control" description="Ads, affiliates, subscriptions management." module="Monetization" />} />
+              <Route path="/enterprise/analytics" element={<EnterprisePlaceholder title="Analytics Engine" description="Article metrics, revenue, performance dashboards." module="Analytics" />} />
               <Route path="/enterprise/security" element={<EnterprisePlaceholder title="Security & Audit" description="IP whitelist, rate limits, feature flags." module="Security" />} />
               <Route path="/enterprise/feature-flags" element={<EnterprisePlaceholder title="Feature Flags" description="Toggle features, A/B experiments, gradual rollout." module="Feature Flags" />} />
               <Route path="/enterprise/system" element={<EnterprisePlaceholder title="System Settings" description="Site config, API keys, branding, SMTP." module="System Settings" />} />
