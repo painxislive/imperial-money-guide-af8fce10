@@ -2,7 +2,6 @@ import { Link } from 'react-router-dom';
 import { Separator } from '@/components/ui/separator';
 
 const Footer = () => {
-  // Generate A-Z alphabet links for glossary navigation
   const alphabetLinks = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(letter => (
     <Link
       key={letter}
@@ -48,6 +47,7 @@ const Footer = () => {
               <li><Link to="/tools" className="text-muted-foreground hover:text-foreground">Calculators</Link></li>
               <li><Link to="/glossary" className="text-muted-foreground hover:text-foreground">Glossary</Link></li>
               <li><Link to="/news" className="text-muted-foreground hover:text-foreground">Latest Articles</Link></li>
+              <li><Link to="/authors/verified" className="text-muted-foreground hover:text-foreground">Our Authors</Link></li>
             </ul>
           </div>
           
@@ -56,7 +56,9 @@ const Footer = () => {
             <ul className="space-y-2 text-sm">
               <li><Link to="/about" className="text-muted-foreground hover:text-foreground">About Us</Link></li>
               <li><Link to="/contact" className="text-muted-foreground hover:text-foreground">Contact</Link></li>
-              <li><Link to="/editorial" className="text-muted-foreground hover:text-foreground">Editorial Policy</Link></li>
+              <li><Link to="/editorial-policy" className="text-muted-foreground hover:text-foreground">Editorial Policy</Link></li>
+              <li><Link to="/review-policy" className="text-muted-foreground hover:text-foreground">Review Policy</Link></li>
+              <li><Link to="/affiliate-disclosure" className="text-muted-foreground hover:text-foreground">Affiliate Disclosure</Link></li>
             </ul>
           </div>
           
@@ -66,6 +68,8 @@ const Footer = () => {
               <li><Link to="/privacy" className="text-muted-foreground hover:text-foreground">Privacy Policy</Link></li>
               <li><Link to="/terms" className="text-muted-foreground hover:text-foreground">Terms of Service</Link></li>
               <li><Link to="/disclaimer" className="text-muted-foreground hover:text-foreground">Disclaimer</Link></li>
+              <li><Link to="/risk-and-disclosures" className="text-muted-foreground hover:text-foreground">Risk Disclosures</Link></li>
+              <li><Link to="/sources-and-citations" className="text-muted-foreground hover:text-foreground">Sources & Citations</Link></li>
             </ul>
           </div>
         </div>

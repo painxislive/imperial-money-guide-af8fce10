@@ -5,147 +5,174 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { AuthProvider } from "@/hooks/useAuth";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { Suspense, lazy } from "react";
+import { PageSkeleton } from "@/components/LoadingSkeleton";
+
+// Eager load critical pages
 import Index from "./pages/Index";
-import ArticlesListPage from "./pages/ArticlesListPage";
-import ArticlePage from "./pages/ArticlePage";
-import News from "./pages/News";
-import NewsArticle from "./pages/NewsArticle";
-import CategoryPillarPage from "./pages/CategoryPillarPage";
-import CategoryPage from "./pages/CategoryPage";
-import AuthorProfile from "./pages/AuthorProfile";
-import TopicsLetter from "./pages/TopicsLetter";
-import AdminDashboard from "./pages/AdminDashboard";
-import AdminArticles from "./pages/AdminArticles";
-import AdminUsers from "./pages/AdminUsers";
-import AdminGlossaryPage from "./pages/AdminGlossaryPage";
-import Tools from "./pages/Tools";
-import HiddenTools from "./pages/HiddenTools";
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
-import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
-import { Premium } from "./pages/Premium";
-import { About } from "./pages/About";
-import Contact from "./pages/Contact";
-import Editorial from "./pages/Editorial";
-import Disclaimer from "./pages/Disclaimer";
-import { Privacy } from "./pages/Privacy";
-import { Terms } from "./pages/Terms";
-import Pricing from "./pages/Pricing";
-import Billing from "./pages/Billing";
-import PremiumTools from "./pages/PremiumTools";
-import VerifiedAuthors from "./pages/VerifiedAuthors";
-import ArticleHistory from "./pages/ArticleHistory";
-import SourcesCitations from "./pages/SourcesCitations";
-import RiskDisclosures from "./pages/RiskDisclosures";
-import DashboardInsights from "./pages/DashboardInsights";
-import DashboardReports from "./pages/DashboardReports";
-import AIInsights from "./pages/AIInsights";
-import CalculatorExplain from "./pages/CalculatorExplain";
-import CompareScenarios from "./pages/CompareScenarios";
-import BetaFeatures from "./pages/BetaFeatures";
-import Labs from "./pages/Labs";
-import Glossary from "./pages/Glossary";
-import GlossaryLetter from "./pages/GlossaryLetter";
-import GlossaryTerm from "./pages/GlossaryTerm";
-import AdminGlossary from "./pages/AdminGlossary";
-import SecureEditPage from "./pages/SecureEditPage";
-import AdminAutomation from "./pages/AdminAutomation";
-import EnterpriseDashboard from "./pages/enterprise/EnterpriseDashboard";
-import EnterpriseRoles from "./pages/enterprise/EnterpriseRoles";
-import EnterpriseWorkflow from "./pages/enterprise/EnterpriseWorkflow";
-import EnterpriseAudit from "./pages/enterprise/EnterpriseAudit";
-import EnterprisePlaceholder from "./pages/enterprise/EnterprisePlaceholder";
-import EnterpriseSEO from "./pages/enterprise/EnterpriseSEO";
-import EnterpriseAutoLinks from "./pages/enterprise/EnterpriseAutoLinks";
-import EnterpriseAuthors from "./pages/enterprise/EnterpriseAuthors";
-import EnterpriseOrgSettings from "./pages/enterprise/EnterpriseOrgSettings";
-import EnterpriseCategorySEO from "./pages/enterprise/EnterpriseCategorySEO";
+
+// Lazy load all other pages
+const ArticlesListPage = lazy(() => import("./pages/ArticlesListPage"));
+const ArticlePage = lazy(() => import("./pages/ArticlePage"));
+const News = lazy(() => import("./pages/News"));
+const NewsArticle = lazy(() => import("./pages/NewsArticle"));
+const CategoryPillarPage = lazy(() => import("./pages/CategoryPillarPage"));
+const CategoryPage = lazy(() => import("./pages/CategoryPage"));
+const AuthorProfile = lazy(() => import("./pages/AuthorProfile"));
+const TopicsLetter = lazy(() => import("./pages/TopicsLetter"));
+const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
+const AdminArticles = lazy(() => import("./pages/AdminArticles"));
+const AdminUsers = lazy(() => import("./pages/AdminUsers"));
+const AdminGlossaryPage = lazy(() => import("./pages/AdminGlossaryPage"));
+const Tools = lazy(() => import("./pages/Tools"));
+const HiddenTools = lazy(() => import("./pages/HiddenTools"));
+const Login = lazy(() => import("./pages/Login"));
+const Signup = lazy(() => import("./pages/Signup"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const Premium = lazy(() => import("./pages/Premium").then(m => ({ default: m.Premium })));
+const About = lazy(() => import("./pages/About").then(m => ({ default: m.About })));
+const Contact = lazy(() => import("./pages/Contact"));
+const Editorial = lazy(() => import("./pages/Editorial"));
+const Disclaimer = lazy(() => import("./pages/Disclaimer"));
+const Privacy = lazy(() => import("./pages/Privacy").then(m => ({ default: m.Privacy })));
+const Terms = lazy(() => import("./pages/Terms").then(m => ({ default: m.Terms })));
+const Pricing = lazy(() => import("./pages/Pricing"));
+const Billing = lazy(() => import("./pages/Billing"));
+const PremiumTools = lazy(() => import("./pages/PremiumTools"));
+const VerifiedAuthors = lazy(() => import("./pages/VerifiedAuthors"));
+const ArticleHistory = lazy(() => import("./pages/ArticleHistory"));
+const SourcesCitations = lazy(() => import("./pages/SourcesCitations"));
+const RiskDisclosures = lazy(() => import("./pages/RiskDisclosures"));
+const DashboardInsights = lazy(() => import("./pages/DashboardInsights"));
+const DashboardReports = lazy(() => import("./pages/DashboardReports"));
+const AIInsights = lazy(() => import("./pages/AIInsights"));
+const CalculatorExplain = lazy(() => import("./pages/CalculatorExplain"));
+const CompareScenarios = lazy(() => import("./pages/CompareScenarios"));
+const BetaFeatures = lazy(() => import("./pages/BetaFeatures"));
+const Labs = lazy(() => import("./pages/Labs"));
+const Glossary = lazy(() => import("./pages/Glossary"));
+const GlossaryLetter = lazy(() => import("./pages/GlossaryLetter"));
+const GlossaryTerm = lazy(() => import("./pages/GlossaryTerm"));
+const AdminGlossary = lazy(() => import("./pages/AdminGlossary"));
+const SecureEditPage = lazy(() => import("./pages/SecureEditPage"));
+const AdminAutomation = lazy(() => import("./pages/AdminAutomation"));
+const ServerError = lazy(() => import("./pages/ServerError"));
+
+// Trust & E-E-A-T pages
+const EditorialPolicy = lazy(() => import("./pages/EditorialPolicy"));
+const ReviewPolicy = lazy(() => import("./pages/ReviewPolicy"));
+const AffiliateDisclosure = lazy(() => import("./pages/AffiliateDisclosure"));
+
+// Enterprise
+const EnterpriseDashboard = lazy(() => import("./pages/enterprise/EnterpriseDashboard"));
+const EnterpriseRoles = lazy(() => import("./pages/enterprise/EnterpriseRoles"));
+const EnterpriseWorkflow = lazy(() => import("./pages/enterprise/EnterpriseWorkflow"));
+const EnterpriseAudit = lazy(() => import("./pages/enterprise/EnterpriseAudit"));
+const EnterprisePlaceholder = lazy(() => import("./pages/enterprise/EnterprisePlaceholder"));
+const EnterpriseSEO = lazy(() => import("./pages/enterprise/EnterpriseSEO"));
+const EnterpriseAutoLinks = lazy(() => import("./pages/enterprise/EnterpriseAutoLinks"));
+const EnterpriseAuthors = lazy(() => import("./pages/enterprise/EnterpriseAuthors"));
+const EnterpriseOrgSettings = lazy(() => import("./pages/enterprise/EnterpriseOrgSettings"));
+const EnterpriseCategorySEO = lazy(() => import("./pages/enterprise/EnterpriseCategorySEO"));
+const EnterpriseGlobalSEO = lazy(() => import("./pages/enterprise/EnterpriseGlobalSEO"));
 
 const queryClient = new QueryClient();
+
+const Lazy = ({ children }: { children: React.ReactNode }) => (
+  <Suspense fallback={<PageSkeleton />}>{children}</Suspense>
+);
 
 const App = () => (
   <HelmetProvider>
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              {/* Articles */}
-              <Route path="/articles" element={<ArticlesListPage />} />
-              <Route path="/article/:slug" element={<ArticlePage />} />
-              <Route path="/news" element={<News />} />
-              <Route path="/news/:slug" element={<NewsArticle />} />
-              {/* Category Pillar Pages */}
-              <Route path="/crypto" element={<CategoryPillarPage />} />
-              <Route path="/stocks" element={<CategoryPillarPage />} />
-              <Route path="/personal-finance" element={<CategoryPillarPage />} />
-              <Route path="/investing" element={<CategoryPillarPage />} />
-              <Route path="/banking" element={<CategoryPillarPage />} />
-              <Route path="/category/:category" element={<CategoryPage />} />
-              <Route path="/author/:authorId" element={<AuthorProfile />} />
-              <Route path="/topics/:letter" element={<TopicsLetter />} />
-              {/* Admin Routes */}
-              <Route path="/admin" element={<AdminDashboard />} />
-              <Route path="/admin/articles" element={<AdminArticles />} />
-              <Route path="/admin/users" element={<AdminUsers />} />
-              <Route path="/admin/glossary" element={<AdminGlossaryPage />} />
-              <Route path="/admin/automation" element={<AdminAutomation />} />
-              <Route path="/edit/:token" element={<SecureEditPage />} />
-              {/* Tools */}
-              <Route path="/tools" element={<Tools />} />
-              <Route path="/hidden-tools" element={<HiddenTools />} />
-              {/* Auth */}
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              {/* Static Pages */}
-              <Route path="/premium" element={<Premium />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/editorial" element={<Editorial />} />
-              <Route path="/disclaimer" element={<Disclaimer />} />
-              <Route path="/privacy" element={<Privacy />} />
-              <Route path="/terms" element={<Terms />} />
-              <Route path="/pricing" element={<Pricing />} />
-              <Route path="/billing" element={<Billing />} />
-              <Route path="/premium/tools" element={<PremiumTools />} />
-              <Route path="/authors/verified" element={<VerifiedAuthors />} />
-              <Route path="/article-update-history" element={<ArticleHistory />} />
-              <Route path="/sources-and-citations" element={<SourcesCitations />} />
-              <Route path="/risk-and-disclosures" element={<RiskDisclosures />} />
-              <Route path="/dashboard/insights" element={<DashboardInsights />} />
-              <Route path="/dashboard/reports" element={<DashboardReports />} />
-              <Route path="/ai-insights" element={<AIInsights />} />
-              <Route path="/calculator/:slug/explain" element={<CalculatorExplain />} />
-              <Route path="/compare/scenarios" element={<CompareScenarios />} />
-              <Route path="/beta" element={<BetaFeatures />} />
-              <Route path="/labs" element={<Labs />} />
-              {/* Glossary */}
-              <Route path="/glossary" element={<Glossary />} />
-              <Route path="/glossary/letter/:letter" element={<GlossaryLetter />} />
-              <Route path="/glossary/term/:slug" element={<GlossaryTerm />} />
-              {/* Enterprise Routes */}
-              <Route path="/enterprise" element={<EnterpriseDashboard />} />
-              <Route path="/enterprise/roles" element={<EnterpriseRoles />} />
-              <Route path="/enterprise/workflow" element={<EnterpriseWorkflow />} />
-              <Route path="/enterprise/audit" element={<EnterpriseAudit />} />
-              <Route path="/enterprise/authors" element={<EnterpriseAuthors />} />
-              <Route path="/enterprise/auto-links" element={<EnterpriseAutoLinks />} />
-              <Route path="/enterprise/org-settings" element={<EnterpriseOrgSettings />} />
-              <Route path="/enterprise/category-seo" element={<EnterpriseCategorySEO />} />
-              <Route path="/enterprise/seo" element={<EnterpriseSEO />} />
-              <Route path="/enterprise/monetization" element={<EnterprisePlaceholder title="Monetization Control" description="Ads, affiliates, subscriptions management." module="Monetization" />} />
-              <Route path="/enterprise/analytics" element={<EnterprisePlaceholder title="Analytics Engine" description="Article metrics, revenue, performance dashboards." module="Analytics" />} />
-              <Route path="/enterprise/security" element={<EnterprisePlaceholder title="Security & Audit" description="IP whitelist, rate limits, feature flags." module="Security" />} />
-              <Route path="/enterprise/feature-flags" element={<EnterprisePlaceholder title="Feature Flags" description="Toggle features, A/B experiments, gradual rollout." module="Feature Flags" />} />
-              <Route path="/enterprise/system" element={<EnterprisePlaceholder title="System Settings" description="Site config, API keys, branding, SMTP." module="System Settings" />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
+          <ErrorBoundary>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                {/* Articles */}
+                <Route path="/articles" element={<Lazy><ArticlesListPage /></Lazy>} />
+                <Route path="/article/:slug" element={<Lazy><ArticlePage /></Lazy>} />
+                <Route path="/news" element={<Lazy><News /></Lazy>} />
+                <Route path="/news/:slug" element={<Lazy><NewsArticle /></Lazy>} />
+                {/* Category Pillar Pages */}
+                <Route path="/crypto" element={<Lazy><CategoryPillarPage /></Lazy>} />
+                <Route path="/stocks" element={<Lazy><CategoryPillarPage /></Lazy>} />
+                <Route path="/personal-finance" element={<Lazy><CategoryPillarPage /></Lazy>} />
+                <Route path="/investing" element={<Lazy><CategoryPillarPage /></Lazy>} />
+                <Route path="/banking" element={<Lazy><CategoryPillarPage /></Lazy>} />
+                <Route path="/category/:category" element={<Lazy><CategoryPage /></Lazy>} />
+                <Route path="/author/:authorId" element={<Lazy><AuthorProfile /></Lazy>} />
+                <Route path="/topics/:letter" element={<Lazy><TopicsLetter /></Lazy>} />
+                {/* Admin Routes */}
+                <Route path="/admin" element={<Lazy><AdminDashboard /></Lazy>} />
+                <Route path="/admin/articles" element={<Lazy><AdminArticles /></Lazy>} />
+                <Route path="/admin/users" element={<Lazy><AdminUsers /></Lazy>} />
+                <Route path="/admin/glossary" element={<Lazy><AdminGlossaryPage /></Lazy>} />
+                <Route path="/admin/automation" element={<Lazy><AdminAutomation /></Lazy>} />
+                <Route path="/edit/:token" element={<Lazy><SecureEditPage /></Lazy>} />
+                {/* Tools */}
+                <Route path="/tools" element={<Lazy><Tools /></Lazy>} />
+                <Route path="/hidden-tools" element={<Lazy><HiddenTools /></Lazy>} />
+                {/* Auth */}
+                <Route path="/login" element={<Lazy><Login /></Lazy>} />
+                <Route path="/signup" element={<Lazy><Signup /></Lazy>} />
+                <Route path="/dashboard" element={<Lazy><Dashboard /></Lazy>} />
+                {/* Static & Trust Pages */}
+                <Route path="/premium" element={<Lazy><Premium /></Lazy>} />
+                <Route path="/about" element={<Lazy><About /></Lazy>} />
+                <Route path="/contact" element={<Lazy><Contact /></Lazy>} />
+                <Route path="/editorial" element={<Lazy><Editorial /></Lazy>} />
+                <Route path="/editorial-policy" element={<Lazy><EditorialPolicy /></Lazy>} />
+                <Route path="/review-policy" element={<Lazy><ReviewPolicy /></Lazy>} />
+                <Route path="/affiliate-disclosure" element={<Lazy><AffiliateDisclosure /></Lazy>} />
+                <Route path="/disclaimer" element={<Lazy><Disclaimer /></Lazy>} />
+                <Route path="/privacy" element={<Lazy><Privacy /></Lazy>} />
+                <Route path="/terms" element={<Lazy><Terms /></Lazy>} />
+                <Route path="/pricing" element={<Lazy><Pricing /></Lazy>} />
+                <Route path="/billing" element={<Lazy><Billing /></Lazy>} />
+                <Route path="/premium/tools" element={<Lazy><PremiumTools /></Lazy>} />
+                <Route path="/authors/verified" element={<Lazy><VerifiedAuthors /></Lazy>} />
+                <Route path="/article-update-history" element={<Lazy><ArticleHistory /></Lazy>} />
+                <Route path="/sources-and-citations" element={<Lazy><SourcesCitations /></Lazy>} />
+                <Route path="/risk-and-disclosures" element={<Lazy><RiskDisclosures /></Lazy>} />
+                <Route path="/dashboard/insights" element={<Lazy><DashboardInsights /></Lazy>} />
+                <Route path="/dashboard/reports" element={<Lazy><DashboardReports /></Lazy>} />
+                <Route path="/ai-insights" element={<Lazy><AIInsights /></Lazy>} />
+                <Route path="/calculator/:slug/explain" element={<Lazy><CalculatorExplain /></Lazy>} />
+                <Route path="/compare/scenarios" element={<Lazy><CompareScenarios /></Lazy>} />
+                <Route path="/beta" element={<Lazy><BetaFeatures /></Lazy>} />
+                <Route path="/labs" element={<Lazy><Labs /></Lazy>} />
+                <Route path="/server-error" element={<Lazy><ServerError /></Lazy>} />
+                {/* Glossary */}
+                <Route path="/glossary" element={<Lazy><Glossary /></Lazy>} />
+                <Route path="/glossary/letter/:letter" element={<Lazy><GlossaryLetter /></Lazy>} />
+                <Route path="/glossary/term/:slug" element={<Lazy><GlossaryTerm /></Lazy>} />
+                {/* Enterprise Routes */}
+                <Route path="/enterprise" element={<Lazy><EnterpriseDashboard /></Lazy>} />
+                <Route path="/enterprise/roles" element={<Lazy><EnterpriseRoles /></Lazy>} />
+                <Route path="/enterprise/workflow" element={<Lazy><EnterpriseWorkflow /></Lazy>} />
+                <Route path="/enterprise/audit" element={<Lazy><EnterpriseAudit /></Lazy>} />
+                <Route path="/enterprise/authors" element={<Lazy><EnterpriseAuthors /></Lazy>} />
+                <Route path="/enterprise/auto-links" element={<Lazy><EnterpriseAutoLinks /></Lazy>} />
+                <Route path="/enterprise/org-settings" element={<Lazy><EnterpriseOrgSettings /></Lazy>} />
+                <Route path="/enterprise/category-seo" element={<Lazy><EnterpriseCategorySEO /></Lazy>} />
+                <Route path="/enterprise/seo" element={<Lazy><EnterpriseSEO /></Lazy>} />
+                <Route path="/enterprise/global-seo" element={<Lazy><EnterpriseGlobalSEO /></Lazy>} />
+                <Route path="/enterprise/monetization" element={<Lazy><EnterprisePlaceholder title="Monetization Control" description="Ads, affiliates, subscriptions management." module="Monetization" /></Lazy>} />
+                <Route path="/enterprise/analytics" element={<Lazy><EnterprisePlaceholder title="Analytics Engine" description="Article metrics, revenue, performance dashboards." module="Analytics" /></Lazy>} />
+                <Route path="/enterprise/security" element={<Lazy><EnterprisePlaceholder title="Security & Audit" description="IP whitelist, rate limits, feature flags." module="Security" /></Lazy>} />
+                <Route path="/enterprise/feature-flags" element={<Lazy><EnterprisePlaceholder title="Feature Flags" description="Toggle features, A/B experiments, gradual rollout." module="Feature Flags" /></Lazy>} />
+                <Route path="/enterprise/system" element={<Lazy><EnterprisePlaceholder title="System Settings" description="Site config, API keys, branding, SMTP." module="System Settings" /></Lazy>} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </ErrorBoundary>
         </TooltipProvider>
       </AuthProvider>
     </QueryClientProvider>

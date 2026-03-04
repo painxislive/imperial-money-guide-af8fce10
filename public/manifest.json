@@ -1,0 +1,32 @@
+{
+  "name": "ImperialPedia - Finance Encyclopedia",
+  "short_name": "ImperialPedia",
+  "description": "Global Finance & Investing Knowledge Platform",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fcfcff",
+  "theme_color": "#0a2f6e",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["finance", "education", "business"],
+  "lang": "en",
+  "dir": "ltr"
+}
