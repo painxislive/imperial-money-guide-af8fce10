@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import EnterpriseLayout from '@/layouts/EnterpriseLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Shield, FileText, Users, Eye, BarChart3, Zap, Globe, Link2, Search, Building, UserCheck } from 'lucide-react';
+import { Shield, FileText, Users, Eye, BarChart3, Zap, Globe, Link2, Search, Building, UserCheck, Settings } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { seoService, SEOMetrics } from '@/services/seoService';
 
@@ -11,6 +11,7 @@ const MODULES = [
   { path: '/enterprise/authors', label: 'Author Management', icon: UserCheck, description: 'Manage author profiles, credentials, and reviewer status', color: 'text-purple-500' },
   { path: '/enterprise/audit', label: 'Audit Logs', icon: Eye, description: 'Track every admin action for compliance and security', color: 'text-orange-500' },
   { path: '/enterprise/seo', label: 'SEO & Content Authority', icon: Globe, description: 'SEO auditing, meta health, internal linking, sitemap', color: 'text-emerald-500' },
+  { path: '/enterprise/global-seo', label: 'Global SEO Settings', icon: Settings, description: 'Meta templates, OG defaults, organization schema', color: 'text-teal-500' },
   { path: '/enterprise/category-seo', label: 'Category SEO', icon: Search, description: 'Pillar content, meta fields, and FAQ for categories', color: 'text-cyan-500' },
   { path: '/enterprise/auto-links', label: 'Auto Internal Linking', icon: Link2, description: 'Configure auto-linking keywords for internal link building', color: 'text-indigo-500' },
   { path: '/enterprise/org-settings', label: 'Organization Settings', icon: Building, description: 'Structured data, branding, and organization info', color: 'text-amber-500' },

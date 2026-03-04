@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { 
   Shield, Users, FileText, Settings, Activity, 
   Eye, Lock, BarChart3, Flag, Zap, ChevronRight,
-  LayoutDashboard
+  LayoutDashboard, Link2, UserCheck, Building, Search, Globe
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -17,11 +17,15 @@ const NAV_ITEMS = [
   { path: '/enterprise', label: 'Overview', icon: LayoutDashboard },
   { path: '/enterprise/roles', label: 'Roles & Permissions', icon: Shield },
   { path: '/enterprise/workflow', label: 'Content Workflow', icon: FileText },
+  { path: '/enterprise/authors', label: 'Author Management', icon: UserCheck },
   { path: '/enterprise/audit', label: 'Audit Logs', icon: Eye },
-  { path: '/enterprise/users', label: 'User Management', icon: Users },
+  { path: '/enterprise/seo', label: 'SEO Control', icon: Activity },
+  { path: '/enterprise/global-seo', label: 'Global SEO Settings', icon: Globe },
+  { path: '/enterprise/category-seo', label: 'Category SEO', icon: Search },
+  { path: '/enterprise/auto-links', label: 'Auto Internal Links', icon: Link2 },
+  { path: '/enterprise/org-settings', label: 'Organization Settings', icon: Building },
   { path: '/enterprise/analytics', label: 'Analytics', icon: BarChart3 },
   { path: '/enterprise/monetization', label: 'Monetization', icon: Zap },
-  { path: '/enterprise/seo', label: 'SEO Control', icon: Activity },
   { path: '/enterprise/security', label: 'Security', icon: Lock },
   { path: '/enterprise/feature-flags', label: 'Feature Flags', icon: Flag },
   { path: '/enterprise/system', label: 'System Settings', icon: Settings },
@@ -50,7 +54,7 @@ export default function EnterpriseLayout({ children, title, description }: Enter
 
       <div className="flex">
         {/* Sidebar */}
-        <aside className="w-64 min-h-[calc(100vh-49px)] border-r border-border bg-card/50 p-4">
+        <aside className="w-64 min-h-[calc(100vh-49px)] border-r border-border bg-card/50 p-4 hidden md:block">
           <nav className="space-y-1">
             {NAV_ITEMS.map((item) => {
               const isActive = location.pathname === item.path;
@@ -74,7 +78,7 @@ export default function EnterpriseLayout({ children, title, description }: Enter
         </aside>
 
         {/* Main content */}
-        <main className="flex-1 p-8">
+        <main className="flex-1 p-4 md:p-8 overflow-auto">
           <div className="max-w-6xl">
             <div className="mb-8">
               <h1 className="text-2xl font-bold tracking-tight text-foreground">{title}</h1>
