@@ -5,7 +5,10 @@ import { Shield, FileText, Users, Eye, BarChart3, Zap, Globe, Link2, Search, Bui
 import { Link } from 'react-router-dom';
 import { seoService, SEOMetrics } from '@/services/seoService';
 
+import { Newspaper } from 'lucide-react';
+
 const MODULES = [
+  { path: '/enterprise/news', label: 'News Manager', icon: Newspaper, description: 'Manage news categories, sources, and country coverage', color: 'text-sky-500' },
   { path: '/enterprise/roles', label: 'Roles & Permissions', icon: Shield, description: 'Manage RBAC, assign roles, configure granular permissions', color: 'text-blue-500' },
   { path: '/enterprise/workflow', label: 'Content Workflow', icon: FileText, description: 'Editorial pipeline with multi-stage review and versioning', color: 'text-green-500' },
   { path: '/enterprise/authors', label: 'Author Management', icon: UserCheck, description: 'Manage author profiles, credentials, and reviewer status', color: 'text-purple-500' },

@@ -18,6 +18,9 @@ const ArticlesListPage = lazy(() => import("./pages/ArticlesListPage"));
 const ArticlePage = lazy(() => import("./pages/ArticlePage"));
 const News = lazy(() => import("./pages/News"));
 const NewsArticle = lazy(() => import("./pages/NewsArticle"));
+const NewsCategoryPage = lazy(() => import("./pages/NewsCategoryPage"));
+const NewsCountryPage = lazy(() => import("./pages/NewsCountryPage"));
+const CountriesListPage = lazy(() => import("./pages/CountriesListPage"));
 const CategoryPillarPage = lazy(() => import("./pages/CategoryPillarPage"));
 const CategoryPage = lazy(() => import("./pages/CategoryPage"));
 const AuthorProfile = lazy(() => import("./pages/AuthorProfile"));
@@ -77,6 +80,7 @@ const EnterpriseAuthors = lazy(() => import("./pages/enterprise/EnterpriseAuthor
 const EnterpriseOrgSettings = lazy(() => import("./pages/enterprise/EnterpriseOrgSettings"));
 const EnterpriseCategorySEO = lazy(() => import("./pages/enterprise/EnterpriseCategorySEO"));
 const EnterpriseGlobalSEO = lazy(() => import("./pages/enterprise/EnterpriseGlobalSEO"));
+const EnterpriseNewsManager = lazy(() => import("./pages/enterprise/EnterpriseNewsManager"));
 
 const queryClient = new QueryClient();
 
@@ -98,8 +102,12 @@ const App = () => (
                 {/* Articles */}
                 <Route path="/articles" element={<Lazy><ArticlesListPage /></Lazy>} />
                 <Route path="/article/:slug" element={<Lazy><ArticlePage /></Lazy>} />
+                {/* News System */}
                 <Route path="/news" element={<Lazy><News /></Lazy>} />
-                <Route path="/news/:slug" element={<Lazy><NewsArticle /></Lazy>} />
+                <Route path="/news/countries" element={<Lazy><CountriesListPage /></Lazy>} />
+                <Route path="/news/country/:countrySlug" element={<Lazy><NewsCountryPage /></Lazy>} />
+                <Route path="/news/:categorySlug" element={<Lazy><NewsCategoryPage /></Lazy>} />
+                <Route path="/news/:categorySlug/:slug" element={<Lazy><NewsArticle /></Lazy>} />
                 {/* Category Pillar Pages */}
                 <Route path="/crypto" element={<Lazy><CategoryPillarPage /></Lazy>} />
                 <Route path="/stocks" element={<Lazy><CategoryPillarPage /></Lazy>} />
@@ -164,6 +172,7 @@ const App = () => (
                 <Route path="/enterprise/category-seo" element={<Lazy><EnterpriseCategorySEO /></Lazy>} />
                 <Route path="/enterprise/seo" element={<Lazy><EnterpriseSEO /></Lazy>} />
                 <Route path="/enterprise/global-seo" element={<Lazy><EnterpriseGlobalSEO /></Lazy>} />
+                <Route path="/enterprise/news" element={<Lazy><EnterpriseNewsManager /></Lazy>} />
                 <Route path="/enterprise/monetization" element={<Lazy><EnterprisePlaceholder title="Monetization Control" description="Ads, affiliates, subscriptions management." module="Monetization" /></Lazy>} />
                 <Route path="/enterprise/analytics" element={<Lazy><EnterprisePlaceholder title="Analytics Engine" description="Article metrics, revenue, performance dashboards." module="Analytics" /></Lazy>} />
                 <Route path="/enterprise/security" element={<Lazy><EnterprisePlaceholder title="Security & Audit" description="IP whitelist, rate limits, feature flags." module="Security" /></Lazy>} />

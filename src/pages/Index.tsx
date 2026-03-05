@@ -1,4 +1,4 @@
-import Header from "@/components/Header";
+import DynamicHeader from "@/components/DynamicHeader";
 import Hero from "@/components/Hero";
 import FeaturedArticles from "@/components/FeaturedArticles";
 import CalculatorSection from "@/components/CalculatorSection";
@@ -15,7 +15,7 @@ const Index = () => {
         keywords="finance encyclopedia, investment education, financial glossary, economic concepts, banking guide, taxation basics, insurance explained"
         structuredData={generateWebsiteSchema()}
       />
-      <Header />
+      <DynamicHeader />
       <main>
         <Hero />
         <FeaturedArticles />
