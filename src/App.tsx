@@ -62,6 +62,16 @@ const AdminGlossary = lazy(() => import("./pages/AdminGlossary"));
 const SecureEditPage = lazy(() => import("./pages/SecureEditPage"));
 const AdminAutomation = lazy(() => import("./pages/AdminAutomation"));
 const ServerError = lazy(() => import("./pages/ServerError"));
+const SearchPage = lazy(() => import("./pages/SearchPage"));
+const TrendingPage = lazy(() => import("./pages/TrendingPage"));
+const LatestNewsPage = lazy(() => import("./pages/LatestNewsPage"));
+const AdminAuthors = lazy(() => import("./pages/AdminAuthors"));
+const AdminCategories = lazy(() => import("./pages/AdminCategories"));
+const AdminMedia = lazy(() => import("./pages/AdminMedia"));
+const AdminSEO = lazy(() => import("./pages/AdminSEO"));
+const AdminHealth = lazy(() => import("./pages/AdminHealth"));
+const AdminAPI = lazy(() => import("./pages/AdminAPI"));
+const AdminAds = lazy(() => import("./pages/AdminAds"));
 
 // Trust & E-E-A-T pages
 const EditorialPolicy = lazy(() => import("./pages/EditorialPolicy"));
