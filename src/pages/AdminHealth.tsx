@@ -25,7 +25,7 @@ const AdminHealth = () => {
 
   const statusColor = (s: string) => s === "healthy" ? "default" : s === "warning" ? "secondary" : "destructive";
   const StatusIcon = ({ status }: { status: string }) =>
-    status === "healthy" ? <CheckCircle className="h-5 w-5 text-green-500" /> : <AlertTriangle className="h-5 w-5 text-yellow-500" />;
+    status === "healthy" ? <CheckCircle className="h-5 w-5 text-accent" /> : <AlertTriangle className="h-5 w-5 text-muted-foreground" />;
 
   return (
     <div className="min-h-screen bg-background">
