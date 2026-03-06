@@ -8,6 +8,8 @@ import { newsService, NewsCategory } from "@/services/newsService";
 const STATIC_NAV = [
   { path: "/", label: "Home" },
   { path: "/articles", label: "Guides" },
+  { path: "/latest", label: "Latest" },
+  { path: "/trending", label: "Trending" },
   { path: "/tools", label: "Calculators" },
   { path: "/glossary", label: "Glossary" },
 ];

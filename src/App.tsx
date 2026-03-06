@@ -62,6 +62,16 @@ const AdminGlossary = lazy(() => import("./pages/AdminGlossary"));
 const SecureEditPage = lazy(() => import("./pages/SecureEditPage"));
 const AdminAutomation = lazy(() => import("./pages/AdminAutomation"));
 const ServerError = lazy(() => import("./pages/ServerError"));
+const SearchPage = lazy(() => import("./pages/SearchPage"));
+const TrendingPage = lazy(() => import("./pages/TrendingPage"));
+const LatestNewsPage = lazy(() => import("./pages/LatestNewsPage"));
+const AdminAuthors = lazy(() => import("./pages/AdminAuthors"));
+const AdminCategories = lazy(() => import("./pages/AdminCategories"));
+const AdminMedia = lazy(() => import("./pages/AdminMedia"));
+const AdminSEO = lazy(() => import("./pages/AdminSEO"));
+const AdminHealth = lazy(() => import("./pages/AdminHealth"));
+const AdminAPI = lazy(() => import("./pages/AdminAPI"));
+const AdminAds = lazy(() => import("./pages/AdminAds"));
 
 // Trust & E-E-A-T pages
 const EditorialPolicy = lazy(() => import("./pages/EditorialPolicy"));
@@ -104,6 +114,9 @@ const App = () => (
                 <Route path="/article/:slug" element={<Lazy><ArticlePage /></Lazy>} />
                 {/* News System */}
                 <Route path="/news" element={<Lazy><News /></Lazy>} />
+                <Route path="/search" element={<Lazy><SearchPage /></Lazy>} />
+                <Route path="/trending" element={<Lazy><TrendingPage /></Lazy>} />
+                <Route path="/latest" element={<Lazy><LatestNewsPage /></Lazy>} />
                 <Route path="/news/countries" element={<Lazy><CountriesListPage /></Lazy>} />
                 <Route path="/news/country/:countrySlug" element={<Lazy><NewsCountryPage /></Lazy>} />
                 <Route path="/news/:categorySlug" element={<Lazy><NewsCategoryPage /></Lazy>} />
@@ -123,6 +136,13 @@ const App = () => (
                 <Route path="/admin/users" element={<Lazy><AdminUsers /></Lazy>} />
                 <Route path="/admin/glossary" element={<Lazy><AdminGlossaryPage /></Lazy>} />
                 <Route path="/admin/automation" element={<Lazy><AdminAutomation /></Lazy>} />
+                <Route path="/admin/authors" element={<Lazy><AdminAuthors /></Lazy>} />
+                <Route path="/admin/categories" element={<Lazy><AdminCategories /></Lazy>} />
+                <Route path="/admin/media" element={<Lazy><AdminMedia /></Lazy>} />
+                <Route path="/admin/seo" element={<Lazy><AdminSEO /></Lazy>} />
+                <Route path="/admin/health" element={<Lazy><AdminHealth /></Lazy>} />
+                <Route path="/admin/api" element={<Lazy><AdminAPI /></Lazy>} />
+                <Route path="/admin/ads" element={<Lazy><AdminAds /></Lazy>} />
                 <Route path="/edit/:token" element={<Lazy><SecureEditPage /></Lazy>} />
                 {/* Tools */}
                 <Route path="/tools" element={<Lazy><Tools /></Lazy>} />
