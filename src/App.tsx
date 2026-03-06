@@ -114,6 +114,9 @@ const App = () => (
                 <Route path="/article/:slug" element={<Lazy><ArticlePage /></Lazy>} />
                 {/* News System */}
                 <Route path="/news" element={<Lazy><News /></Lazy>} />
+                <Route path="/search" element={<Lazy><SearchPage /></Lazy>} />
+                <Route path="/trending" element={<Lazy><TrendingPage /></Lazy>} />
+                <Route path="/latest" element={<Lazy><LatestNewsPage /></Lazy>} />
                 <Route path="/news/countries" element={<Lazy><CountriesListPage /></Lazy>} />
                 <Route path="/news/country/:countrySlug" element={<Lazy><NewsCountryPage /></Lazy>} />
                 <Route path="/news/:categorySlug" element={<Lazy><NewsCategoryPage /></Lazy>} />
