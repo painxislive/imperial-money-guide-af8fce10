@@ -133,6 +133,13 @@ const App = () => (
                 <Route path="/admin/users" element={<Lazy><AdminUsers /></Lazy>} />
                 <Route path="/admin/glossary" element={<Lazy><AdminGlossaryPage /></Lazy>} />
                 <Route path="/admin/automation" element={<Lazy><AdminAutomation /></Lazy>} />
+                <Route path="/admin/authors" element={<Lazy><AdminAuthors /></Lazy>} />
+                <Route path="/admin/categories" element={<Lazy><AdminCategories /></Lazy>} />
+                <Route path="/admin/media" element={<Lazy><AdminMedia /></Lazy>} />
+                <Route path="/admin/seo" element={<Lazy><AdminSEO /></Lazy>} />
+                <Route path="/admin/health" element={<Lazy><AdminHealth /></Lazy>} />
+                <Route path="/admin/api" element={<Lazy><AdminAPI /></Lazy>} />
+                <Route path="/admin/ads" element={<Lazy><AdminAds /></Lazy>} />
                 <Route path="/edit/:token" element={<Lazy><SecureEditPage /></Lazy>} />
                 {/* Tools */}
                 <Route path="/tools" element={<Lazy><Tools /></Lazy>} />
